@@ -18,20 +18,6 @@ from nltk.corpus import stopwords
 nltk.download('stopwords')
 import re
 
-import subprocess
-import sys
-
-try:
-    # Try importing the googleapiclient module
-    from googleapiclient.discovery import build
-except ImportError:
-    # If module is not found, install it
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "google-api-python-client"])
-
-    # Now, try importing again
-    from googleapiclient.discovery import build
-
-
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
 st.title('Vibes Pie - YouTube Sentiment Analysis Dashboard')
