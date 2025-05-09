@@ -3,9 +3,7 @@
 
 # In[ ]:
 import sys
-{sys.executable} -m pip install --upgrade google-api-python-client
 import subprocess
-subprocess.run(["pip", "install", "google-api-python-client"])
 from googleapiclient.discovery import build
 import streamlit as st
 import pandas as pd
@@ -19,6 +17,18 @@ import nltk
 from nltk.corpus import stopwords
 nltk.download('stopwords')
 import re
+
+# Function to install a package if it's missing
+def install(package):
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", package])
+
+# Try importing the module, install if not found
+try:
+    from googleapiclient.discovery import build
+except ImportError:
+    print("googleapiclient not found. Installing...")
+    install("google-api-python-client")
+    from googleapiclient.discovery import build
 
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
