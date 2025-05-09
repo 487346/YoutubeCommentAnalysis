@@ -1,0 +1,11 @@
+streamlit
+pandas
+seaborn
+matplotlib
+wordcloud
+scikit-learn
+nltk
+textblob
+pytube
+deep-translator
+google-api-python-client
