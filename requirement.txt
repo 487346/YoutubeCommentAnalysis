@@ -14,3 +14,5 @@ google-auth-httplib2
 google-auth-oauthlib
 sys
 subprocess
+Flask
+google-api-core
