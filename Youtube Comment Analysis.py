@@ -3,9 +3,10 @@
 
 # In[ ]:
 
-
-import streamlit as st
+import subprocess
+subprocess.run(["pip", "install", "google-api-python-client"])
 from googleapiclient.discovery import build
+import streamlit as st
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
