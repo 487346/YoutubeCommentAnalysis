@@ -2,7 +2,8 @@
 # coding: utf-8
 
 # In[ ]:
-!pip install --upgrade google-api-python-client
+import sys
+!{sys.executable} -m pip install --upgrade google-api-python-client
 import subprocess
 subprocess.run(["pip", "install", "google-api-python-client"])
 from googleapiclient.discovery import build
