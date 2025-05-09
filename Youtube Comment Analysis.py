@@ -18,17 +18,19 @@ from nltk.corpus import stopwords
 nltk.download('stopwords')
 import re
 
-# Function to install a package if it's missing
-def install(package):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--upgrade", package])
+import subprocess
+import sys
 
-# Try importing the module, install if not found
 try:
+    # Try importing the googleapiclient module
     from googleapiclient.discovery import build
 except ImportError:
-    print("googleapiclient not found. Installing...")
-    install("google-api-python-client")
+    # If module is not found, install it
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "google-api-python-client"])
+
+    # Now, try importing again
     from googleapiclient.discovery import build
+
 
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
