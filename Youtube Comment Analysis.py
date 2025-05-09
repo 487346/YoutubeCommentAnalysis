@@ -81,22 +81,6 @@ if video_url:
         plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99'])
         st.pyplot(plt)
 
-        # WordClouds
-        st.subheader('Word Cloud of Positive Comments')
-        positive_words = ' '.join(df[df['Sentiment'] == 'Positive']['Processed_Comment'])
-        wordcloud = WordCloud(width=800, height=400).generate(positive_words)
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis('off')
-        st.pyplot(plt)
-
-        st.subheader('Word Cloud of Negative Comments')
-        negative_words = ' '.join(df[df['Sentiment'] == 'Negative']['Processed_Comment'])
-        wordcloud = WordCloud(width=800, height=400).generate(negative_words)
-        plt.figure(figsize=(10, 5))
-        plt.imshow(wordcloud, interpolation='bilinear')
-        plt.axis('off')
-        st.pyplot(plt)
 
         # Top 10 Positive and Negative Comments
         st.subheader('Top 10 Positive Comments')
@@ -106,14 +90,6 @@ if video_url:
         st.subheader('Top 10 Negative Comments')
         for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
             st.write(f"- {comment}")
-
-        # Confusion Matrix
-        st.subheader('Confusion Matrix')
-        y_pred = df['Sentiment']
-        y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]
-        cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
-        st.pyplot(plt)
 
         # Most Common Words
         st.subheader('Most Common Words')
@@ -126,6 +102,40 @@ if video_url:
         df['Date'] = df['Timestamp'].dt.date
         time_series_data = df.groupby(['Date', 'Sentiment']).size().unstack(fill_value=0)
         st.line_chart(time_series_data)
+
+        # Confusion Matrix
+        st.subheader('Confusion Matrix')
+        y_pred = df['Sentiment']
+        y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]
+        cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
+        st.pyplot(plt)
+
+# WordClouds Side by Side
+        st.subheader('Word Clouds of Positive and Negative Comments')
+        
+        # Creating Columns for Side by Side Display
+        col1, col2 = st.columns(2)
+
+        # Positive Word Cloud
+        with col1:
+            st.markdown("### Positive Comments")
+            positive_words = ' '.join(df[df['Sentiment'] == 'Positive']['Processed_Comment'])
+            wordcloud = WordCloud(width=600, height=400).generate(positive_words)
+            plt.figure(figsize=(6, 4))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
+
+        # Negative Word Cloud
+        with col2:
+            st.markdown("### Negative Comments")
+            negative_words = ' '.join(df[df['Sentiment'] == 'Negative']['Processed_Comment'])
+            wordcloud = WordCloud(width=600, height=400).generate(negative_words)
+            plt.figure(figsize=(6, 4))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
 
     else:
         st.error('Invalid YouTube URL')
