@@ -24,7 +24,7 @@ st.title('Vibes Pie - YouTube Sentiment Analysis Dashboard')
 st.write('Unmasking the true sentiments through comments!')
 
 # YouTube API Key and Configurations
-API_KEY = 'YOUR_API_KEY'  # Replace with your own YouTube API Key
+API_KEY = 'AIzaSyD5-RtE9nM-wgOXCSnQsmz6CuN4dnDJ7bE'  # Replace with your own YouTube API Key
 youtube = build('youtube', 'v3', developerKey=API_KEY)
 
 # User Input for YouTube Video URL
