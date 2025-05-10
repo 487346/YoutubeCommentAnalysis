@@ -66,9 +66,9 @@ def get_comments(API_KEY, video_id):
 
 # Fetch comments button
 if st.sidebar.button("🔍 Fetch Comments"):
-    if api_key and video_id:
+    if API_KEY and video_id:
         with st.spinner("Fetching Comments..."):
-            comments = get_comments(api_key, video_id)
+            comments = get_comments(API_KEY, video_id)
             st.success(f"Fetched {len(comments)} comments!")
             st.write(comments)
     else:
