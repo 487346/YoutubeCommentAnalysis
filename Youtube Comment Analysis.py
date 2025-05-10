@@ -22,7 +22,7 @@ import re
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
 st.title('Vibes Pie - YouTube Sentiment Analysis Dashboard')
-st.write('Unmasking the true sentiments through comments!')z
+st.write('Unmasking the true sentiments through comments!')
 
 # YouTube API Key and Configurations
 API_KEY = 'AIzaSyD5-RtE9nM-wgOXCSnQsmz6CuN4dnDJ7bE'  # Replace with your own YouTube API Key
