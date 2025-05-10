@@ -92,7 +92,7 @@ if video_url:
         # Sentiment Split Pie Chart
         with col2:
             st.markdown("### Sentiment Split")
-            plt.figure(figsize=(5, 5))
+            plt.figure(figsize=(5, 4))
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
 
