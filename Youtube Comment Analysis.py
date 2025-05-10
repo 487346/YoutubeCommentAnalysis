@@ -148,6 +148,7 @@ if video_url:
         # Closing the main container
         st.markdown('</div>', unsafe_allow_html=True)
 
+
         # Most Common Words
         st.subheader('Most Common Words')
         common_words = Counter(' '.join(df['Processed_Comment']).split()).most_common(20)
