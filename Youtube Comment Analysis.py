@@ -48,8 +48,8 @@ def get_youtube_comments(video_id):
     return pd.DataFrame({'Comment': comments, 'Timestamp': pd.to_datetime(timestamps)})
     
 # Function to fetch YouTube comments
-def get_comments(api_key, video_id):
-    youtube = build('youtube', 'v3', developerKey=api_key)
+def get_comments(API_KEY, video_id):
+    youtube = build('youtube', 'v3', developerKey=API_KEY)
     request = youtube.commentThreads().list(
         part='snippet',
         videoId=video_id,
