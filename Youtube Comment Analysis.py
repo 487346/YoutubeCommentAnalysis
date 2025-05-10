@@ -96,14 +96,23 @@ if video_url:
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
 
-        # Top 10 Positive and Negative Comments
-        st.subheader('Top 10 Positive Comments')
-        for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-            st.write(f"- {comment}")
-
-        st.subheader('Top 10 Negative Comments')
-        for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-            st.write(f"- {comment}")
+        # Top 10 Positive and Negative Comments Side by Side
+        st.subheader('Top 10 Positive and Negative Comments')
+        
+        # Creating Columns for Side by Side Display
+        col1, col2 = st.columns(2)
+        
+        # Top 10 Positive Comments
+        with col1:
+            st.markdown("### Top 10 Positive Comments")
+            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
+                st.write(f"- {comment}")
+        
+        # Top 10 Negative Comments
+        with col2:
+            st.markdown("### Top 10 Negative Comments")
+            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
+                st.write(f"- {comment}")
 
         # Most Common Words
         st.subheader('Most Common Words')
