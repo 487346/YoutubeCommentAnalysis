@@ -96,36 +96,36 @@ if video_url:
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
 
-# Top 10 Positive and Negative Comments Side by Side with White Background
-st.subheader('Top 10 Positive and Negative Comments')
-
-# Custom CSS for white background and padding
-st.markdown("""
-    <style>
-    .comment-box {
-        background-color: #ffffff;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# Creating Columns for Side by Side Display
-col1, col2 = st.columns(2)
-
-# Top 10 Positive Comments
-with col1:
-    st.markdown("### Top 10 Positive Comments")
-    for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-        st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
-
-# Top 10 Negative Comments
-with col2:
-    st.markdown("### Top 10 Negative Comments")
-    for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-        st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
+        # Top 10 Positive and Negative Comments Side by Side with White Background
+        st.subheader('Top 10 Positive and Negative Comments')
+        
+        # Custom CSS for white background and padding
+        st.markdown("""
+            <style>
+            .comment-box {
+                background-color: #ffffff;
+                padding: 10px;
+                border-radius: 5px;
+                margin-bottom: 10px;
+                border: 1px solid #ddd;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+        
+        # Creating Columns for Side by Side Display
+        col1, col2 = st.columns(2)
+        
+        # Top 10 Positive Comments
+        with col1:
+            st.markdown("### Top 10 Positive Comments")
+            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
+                st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
+        
+        # Top 10 Negative Comments
+        with col2:
+            st.markdown("### Top 10 Negative Comments")
+            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
+                st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
 
 
         # Most Common Words
