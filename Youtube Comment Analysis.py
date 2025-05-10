@@ -46,7 +46,34 @@ def get_youtube_comments(video_id):
         comments.append(item['snippet']['topLevelComment']['snippet']['textDisplay'])
         timestamps.append(item['snippet']['topLevelComment']['snippet']['publishedAt'])
     return pd.DataFrame({'Comment': comments, 'Timestamp': pd.to_datetime(timestamps)})
+    
+# Function to fetch YouTube comments
+def get_comments(api_key, video_id):
+    youtube = build('youtube', 'v3', developerKey=api_key)
+    request = youtube.commentThreads().list(
+        part='snippet',
+        videoId=video_id,
+        maxResults=100
+    )
+    response = request.execute()
 
+    comments = []
+    for item in response['items']:
+        comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+        comments.append(comment)
+
+    return comments
+
+# Fetch comments button
+if st.sidebar.button("🔍 Fetch Comments"):
+    if api_key and video_id:
+        with st.spinner("Fetching Comments..."):
+            comments = get_comments(api_key, video_id)
+            st.success(f"Fetched {len(comments)} comments!")
+            st.write(comments)
+    else:
+        st.error("Please enter both API Key and Video ID.")
+        
 # Data Preprocessing
 def preprocess_text(text):
     text = text.lower()
