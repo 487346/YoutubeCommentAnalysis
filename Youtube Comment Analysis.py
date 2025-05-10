@@ -102,9 +102,8 @@ if video_url:
         # Custom CSS for styling
         st.markdown("""
             <style>
-            .comment-container {
+            .main-container {
                 background-color: #ffffff;
-                border: 1px solid #ddd;
                 border-radius: 8px;
                 padding: 20px;
                 margin-bottom: 20px;
@@ -117,7 +116,7 @@ if video_url:
                 color: #333333;
             }
             .comment-box {
-                background-color: #f0f0f0;
+                background-color: #f9f9f9;
                 color: #000000;
                 padding: 10px;
                 border-radius: 5px;
@@ -129,7 +128,7 @@ if video_url:
             """, unsafe_allow_html=True)
         
         # Main container for white box
-        st.markdown('<div class="comment-container">', unsafe_allow_html=True)
+        st.markdown('<div class="main-container">', unsafe_allow_html=True)
         
         # Creating Columns inside the white box
         col1, col2 = st.columns(2)
@@ -148,6 +147,7 @@ if video_url:
         
         # Closing the main container
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
