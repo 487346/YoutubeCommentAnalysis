@@ -108,6 +108,7 @@ if video_url:
                 border-radius: 8px;
                 padding: 20px;
                 margin-bottom: 20px;
+                color: #000000;
             }
             .comment-title {
                 font-size: 18px;
@@ -116,7 +117,7 @@ if video_url:
                 color: #333333;
             }
             .comment-box {
-                background-color: #f9f9f9;
+                background-color: #f0f0f0;
                 color: #000000;
                 padding: 10px;
                 border-radius: 5px;
@@ -147,6 +148,7 @@ if video_url:
         
         # Closing the main container
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 
         # Most Common Words
