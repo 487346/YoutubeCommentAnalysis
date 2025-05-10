@@ -96,57 +96,58 @@ if video_url:
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
 
-        # Top 10 Positive and Negative Comments in Two Columns within a White Box
-        st.subheader('Top 10 Positive and Negative Comments')
-        
-        # Custom CSS for styling
-        st.markdown("""
-            <style>
-            .main-container {
-                background-color: #ffffff;
-                border-radius: 8px;
-                padding: 20px;
-                margin-bottom: 20px;
-                color: #000000;
-            }
-            .comment-title {
-                font-size: 18px;
-                font-weight: bold;
-                margin-bottom: 10px;
-                color: #333333;
-            }
-            .comment-box {
-                background-color: #f9f9f9;
-                color: #000000;
-                padding: 10px;
-                border-radius: 5px;
-                margin-bottom: 10px;
-                border: 1px solid #eee;
-                font-size: 14px;
-            }
-            </style>
-            """, unsafe_allow_html=True)
-        
-        # Main container for white box
-        st.markdown('<div class="main-container">', unsafe_allow_html=True)
-        
-        # Creating Columns inside the white box
-        col1, col2 = st.columns(2)
-        
-        # Top 10 Positive Comments
-        with col1:
-            st.markdown('<div class="comment-title">Top 10 Positive Comments</div>', unsafe_allow_html=True)
-            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-                st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
-        
-        # Top 10 Negative Comments
-        with col2:
-            st.markdown('<div class="comment-title">Top 10 Negative Comments</div>', unsafe_allow_html=True)
-            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-                st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
-        
-        # Closing the main container
-        st.markdown('</div>', unsafe_allow_html=True)
+# Top 10 Positive and Negative Comments in Two Columns within a White Box
+st.subheader('Top 10 Positive and Negative Comments')
+
+# Custom CSS for styling
+st.markdown("""
+    <style>
+    .main-container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .comment-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333333;
+    }
+    .comment-box {
+        background-color: #f9f9f9;
+        color: #000000;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #eee;
+        font-size: 14px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# Main container for white box
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+
+# Creating Columns inside the white box
+col1, col2 = st.columns(2, gap="medium")
+
+# Top 10 Positive Comments
+with col1:
+    st.markdown('<div class="comment-title">Top 10 Positive Comments</div>', unsafe_allow_html=True)
+    for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
+        st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
+
+# Top 10 Negative Comments
+with col2:
+    st.markdown('<div class="comment-title">Top 10 Negative Comments</div>', unsafe_allow_html=True)
+    for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
+        st.markdown(f'<div class="comment-box">- {comment}</div>', unsafe_allow_html=True)
+
+# Closing the main container
+st.markdown('</div>', unsafe_allow_html=True)
+
 
 
         # Most Common Words
