@@ -158,54 +158,47 @@ if video_url:
             plt.imshow(wordcloud, interpolation='bilinear')
             plt.axis('off')
             st.pyplot(plt)
+            
 # ---- Pre-trained Spam Detection Model Loading ----
-@st.cache_resource
 def load_spam_model():
-    """
-    Load the pre-trained spam detection model and vectorizer.
-    If not available, train on sample data, save, and load it.
-    """
     try:
-        # Load the vectorizer and model if they are already saved
-        vectorizer = joblib.load("tfidf_vectorizer.pkl")
-        model = joblib.load("spam_detector_model.pkl")
-    except FileNotFoundError:
-        st.warning("Pre-trained models not found. Training a new model...")
+        if os.path.exists("tfidf_vectorizer.pkl") and os.path.exists("spam_detector_model.pkl"):
+            print("✅ Loading pre-trained models...")
+            vectorizer = joblib.load("tfidf_vectorizer.pkl")
+            model = joblib.load("spam_detector_model.pkl")
+        else:
+            print("⚠️ Models not found, training new ones...")
+            # Sample Spam Dataset (replace with any spam dataset you have)
+            data = pd.read_csv("https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv", sep='\t', header=None)
+            data.columns = ['Label', 'Message']
 
-        # ---- Sample Spam Dataset ----
-        data = pd.read_csv(
-            "https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv",
-            sep='\t',
-            header=None
-        )
-        data.columns = ['Label', 'Message']
+            # Vectorization
+            vectorizer = TfidfVectorizer(stop_words='english')
+            X = vectorizer.fit_transform(data['Message'])
+            y = data['Label'].map({'ham': 0, 'spam': 1})
 
-        # ---- Vectorization ----
-        vectorizer = TfidfVectorizer(stop_words='english')
-        X = vectorizer.fit_transform(data['Message'])
-        y = data['Label'].map({'ham': 0, 'spam': 1})
+            # Train-Test Split
+            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-        # ---- Train-Test Split ----
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+            # Model Training
+            model = MultinomialNB()
+            model.fit(X_train, y_train)
 
-        # ---- Model Training ----
-        model = MultinomialNB()
-        model.fit(X_train, y_train)
-
-        # ---- Saving the model for future use ----
-        joblib.dump(vectorizer, "tfidf_vectorizer.pkl")
-        joblib.dump(model, "spam_detector_model.pkl")
-
-        # ---- Model Evaluation ----
-        predictions = model.predict(X_test)
-        accuracy = accuracy_score(y_test, predictions)
-        st.success(f"Spam Detection Model trained with an accuracy of: {accuracy:.2f}")
+            # Saving the model for future use
+            joblib.dump(vectorizer, "tfidf_vectorizer.pkl")
+            joblib.dump(model, "spam_detector_model.pkl")
+            
+            predictions = model.predict(X_test)
+            print("Spam Detection Model Accuracy:", accuracy_score(y_test, predictions))
+    except Exception as e:
+        print(f"🚫 Error loading models: {e}")
+        st.error(f"Error loading models: {e}")
+        return None, None
 
     return vectorizer, model
 
 # 🚀 Load the pre-trained model outside the main logic to optimize performance
 tfidf_vectorizer, spam_detector_model = load_spam_model()
-
 
 # ---- Enhanced Spam Detection ----
 def detect_spam(comment):
