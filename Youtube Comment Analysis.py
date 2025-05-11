@@ -20,6 +20,7 @@ nltk.download('stopwords')
 import re
 import joblib
 import os
+from nltk.sentiment import SentimentIntensityAnalyzer
 
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
@@ -137,23 +138,55 @@ if video_url:
             plt.figure(figsize=(5, 4))
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
-# Top 10 Positive and Negative Comments Side by Side
-        st.subheader('Top 10 Positive and Negative Comments')
+            
         
-        # Creating Columns for Side by Side Display
-        col1, col2 = st.columns(2)
+        # Initialize VADER
+        sia = SentimentIntensityAnalyzer()
         
-        # Top 10 Positive Comments
-        with col1:
-            st.markdown("### Top 10 Positive Comments")
-            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-                st.write(f"- {comment}")
+        # Function to determine sentiment
+        def detect_sentiment(comment):
+            score = sia.polarity_scores(comment)
+            if score['compound'] > 0.05:
+                return 'Positive'
+            elif score['compound'] < -0.05:
+                return 'Negative'
+            else:
+                return 'Neutral'
         
-        # Top 10 Negative Comments
-        with col2:
-            st.markdown("### Top 10 Negative Comments")
-            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-                st.write(f"- {comment}")
+        # Apply sentiment detection to each comment
+        if 'df' in locals():
+            df['Sentiment'] = df['Processed_Comment'].apply(detect_sentiment)
+            
+            # Display sentiment distribution
+            st.subheader('Sentiment Analysis Overview')
+            sentiment_counts = df['Sentiment'].value_counts()
+            
+            # Plot the results
+            plt.figure(figsize=(5, 4))
+            sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
+            plt.title("Number of Comments per Sentiment")
+            plt.ylabel('Count')
+            plt.xlabel('Sentiment')
+            st.pyplot(plt)
+        
+            # ---- Top 10 Positive and Negative Comments ----
+            st.subheader('Top 10 Positive and Negative Comments')
+            
+            # Creating Columns for Side by Side Display
+            col1, col2 = st.columns(2)
+            
+            # Top 10 Positive Comments
+            with col1:
+                st.markdown("### Top 10 Positive Comments")
+                for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
+                    st.write(f"- {comment}")
+            
+            # Top 10 Negative Comments
+            with col2:
+                st.markdown("### Top 10 Negative Comments")
+                for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
+                    st.write(f"- {comment}")
+
 
         # Most Common Words
         st.subheader('Most Common Words')
