@@ -159,6 +159,7 @@ if video_url:
             plt.axis('off')
             st.pyplot(plt)
 # ---- Pre-trained Spam Detection Model Loading ----
+@st.cache_resource
 def load_spam_model():
     """
     Load the pre-trained spam detection model and vectorizer.
