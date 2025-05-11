@@ -157,7 +157,7 @@ if video_url:
         
         # Sentiment Distribution Bar Chart
         with col1:
-            plt.figure(figsize=(4.5, 4.5))
+            plt.figure(figsize=(4, 4))
             sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
             plt.title("Number of Comments per Sentiment")
             plt.ylabel('Count')
@@ -167,7 +167,7 @@ if video_url:
         # Sentiment Split Pie Chart
         with col2:
             st.markdown("### Sentiment Split")
-            plt.figure(figsize=(4.5, 4.5))  # Changed to square size for better look
+            plt.figure(figsize=(5, 5))  # Changed to square size for better look
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%',
                     colors=['#66b3ff', '#99ff99', '#ff9999'])
             plt.gca().set_aspect('equal')  # This keeps the pie chart circular
