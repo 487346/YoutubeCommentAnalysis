@@ -175,6 +175,7 @@ if video_url:
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
+        
         # Top 10 Positive Comments
         with col1:
             st.markdown("### Top 10 Positive Comments")
@@ -257,7 +258,7 @@ if video_url:
             st.write("Metrics DataFrame Preview:")
             st.write(metrics_df)
             st.write("Length of Classes:", len(metrics_df['Class']))
-            positions = np.arange(len(metrics_df['Class'])) if not metrics_df.empty else np.array([0])
+            positions = np.arange(len(metrics_df['Class'])) if len(metrics_df) > 0 else np.array([0])
             
             # Bars
             plt.bar(positions, metrics_df['True Positive (TP)'], width=bar_width, label='TP', color='green')
