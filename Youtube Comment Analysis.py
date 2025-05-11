@@ -161,7 +161,12 @@ if video_url:
             # Display sentiment distribution
             st.subheader('Sentiment Analysis Overview')
             sentiment_counts = df['Sentiment'].value_counts()
-            
+        
+        # Creating Columns for Side by Side Display
+        col1, col2 = st.columns(2)
+        
+        # Sentiment Distribution Bar Chart
+        with col1:
             # Plot the results
             plt.figure(figsize=(5, 4))
             sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
@@ -170,6 +175,14 @@ if video_url:
             plt.xlabel('Sentiment')
             st.pyplot(plt)
         
+        # Sentiment Split Pie Chart
+        with col2:
+            st.markdown("### Sentiment Split")
+            plt.figure(figsize=(5, 4))
+            plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
+            st.pyplot(plt)
+            
+
             # ---- Top 10 Positive and Negative Comments ----
             st.subheader('Top 10 Positive and Negative Comments')
             
@@ -307,16 +320,7 @@ if 'df' in locals():
 
     # ---- Display Spam Comments and Analysis ----
     st.subheader('🚫 Spam Detection & Analysis')
-
-    # ---- Visualization ----
-    spam_counts = df['Spam'].value_counts()
-    fig, ax = plt.subplots()
-    sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
-    plt.title("Spam Detection Overview")
-    plt.ylabel('Number of Comments')
-    plt.xlabel('Comment Type')
-    st.pyplot(fig)
-
+    
     # ---- Display Spam Comments ----
     spam_comments = df[df['Spam'] == 'Spam']
     if not spam_comments.empty:
@@ -330,5 +334,15 @@ if 'df' in locals():
         st.write(top_spammers)
     else:
         st.success("No spam comments detected! 🎉")
+        
+    # ---- Visualization ----
+    spam_counts = df['Spam'].value_counts()
+    fig, ax = plt.subplots()
+    sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
+    plt.title("Spam Detection Overview")
+    plt.ylabel('Number of Comments')
+    plt.xlabel('Comment Type')
+    st.pyplot(fig)
+    
 else:
     st.error('Invalid YouTube URL')
