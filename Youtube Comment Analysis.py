@@ -166,8 +166,8 @@ def detect_spam(comment):
     prediction = spam_detector_model.predict(comment_transformed)
     return 'Spam' if prediction[0] == 1 else 'Not Spam'
         
-        # Apply the new spam detection on YouTube comments
-        df['Spam'] = df['Comment'].apply(detect_spam)
+# Apply the new spam detection on YouTube comments
+df['Spam'] = df['Comment'].apply(detect_spam)
         
         # ---- Display Spam Comments and Analysis ----
         st.subheader('🚫 Spam Detection & Analysis')
