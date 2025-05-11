@@ -181,62 +181,62 @@ plt.ylabel('Number of Comments')
 plt.xlabel('Comment Type')
 st.pyplot(fig)
         
-        # Display Spam Comments
-        spam_comments = df[df['Spam'] == 'Spam']
-        if not spam_comments.empty:
-            st.markdown("### 🚩 Detected Spam Comments and Usernames")
-            st.dataframe(spam_comments[['User', 'Comment']])
-        
-            # ---- Top Spam Commenters ----
-            st.markdown("### 🏆 Top Spam Commenters")
-            top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
-            top_spammers.columns = ['Username', 'Spam Count']
-            st.write(top_spammers)
-        else:
-            st.success("No spam comments detected! 🎉")
+# Display Spam Comments
+spam_comments = df[df['Spam'] == 'Spam']
+if not spam_comments.empty:
+    st.markdown("### 🚩 Detected Spam Comments and Usernames")
+    st.dataframe(spam_comments[['User', 'Comment']])
+
+    # ---- Top Spam Commenters ----
+    st.markdown("### 🏆 Top Spam Commenters")
+    top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
+    top_spammers.columns = ['Username', 'Spam Count']
+    st.write(top_spammers)
+else:
+    st.success("No spam comments detected! 🎉")
 
 
-        # ---- Influential Commenters Analysis ----
-        st.subheader('🔥 Influential Commenters Analysis')
-        top_commenters = df.groupby('User').agg({
-            'Comment': 'count',
-            'Likes': 'sum'
-        }).sort_values(by='Comment', ascending=False).head(10).reset_index()
-        st.write(top_commenters)
+# ---- Influential Commenters Analysis ----
+st.subheader('🔥 Influential Commenters Analysis')
+top_commenters = df.groupby('User').agg({
+    'Comment': 'count',
+    'Likes': 'sum'
+}).sort_values(by='Comment', ascending=False).head(10).reset_index()
+st.write(top_commenters)
 
-        # ---- Topic Modeling (LDA) ----
-        st.subheader('🧠 Topic Modeling (LDA)')
-        
-        # Vectorizing the text data
-        vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
-        X = vectorizer.fit_transform(df['Processed_Comment'])
-        
-        # Applying LDA
-        lda_model = LatentDirichletAllocation(n_components=5, random_state=42)
-        lda_model.fit(X)
-        
-        # Display Topics in a DataFrame
-        terms = vectorizer.get_feature_names_out()
-        topics = {}
-        
-        for idx, topic in enumerate(lda_model.components_):
-            topic_words = [terms[i] for i in topic.argsort()[-5:]]
-            topics[f"Topic #{idx + 1}"] = topic_words
-        
-        # Convert dictionary to DataFrame
-        topics_df = pd.DataFrame(topics)
-        topics_df.index = [f"Word {i+1}" for i in range(topics_df.shape[0])]
-        
-        # Display as a table
-        st.table(topics_df)
+# ---- Topic Modeling (LDA) ----
+st.subheader('🧠 Topic Modeling (LDA)')
 
-        # ---- Confusion Matrix ----
-        st.subheader('🗂️ Confusion Matrix')
-        y_pred = df['Sentiment']
-        y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]
-        cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
-        st.pyplot(plt)
+# Vectorizing the text data
+vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
+X = vectorizer.fit_transform(df['Processed_Comment'])
 
-    else:
-        st.error('Invalid YouTube URL')
+# Applying LDA
+lda_model = LatentDirichletAllocation(n_components=5, random_state=42)
+lda_model.fit(X)
+
+# Display Topics in a DataFrame
+terms = vectorizer.get_feature_names_out()
+topics = {}
+
+for idx, topic in enumerate(lda_model.components_):
+    topic_words = [terms[i] for i in topic.argsort()[-5:]]
+    topics[f"Topic #{idx + 1}"] = topic_words
+
+# Convert dictionary to DataFrame
+topics_df = pd.DataFrame(topics)
+topics_df.index = [f"Word {i+1}" for i in range(topics_df.shape[0])]
+
+# Display as a table
+st.table(topics_df)
+
+# ---- Confusion Matrix ----
+st.subheader('🗂️ Confusion Matrix')
+y_pred = df['Sentiment']
+y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]
+cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
+st.pyplot(plt)
+
+else:
+st.error('Invalid YouTube URL')
