@@ -254,7 +254,7 @@ if video_url:
             
             # Plotting each bar separately for better visibility
             bar_width = 0.2
-            positions = np.arange(len(metrics_df['Class']))
+            positions = np.arange(len(metrics_df['Class'])) if not metrics_df.empty else np.array([0])
             
             # Bars
             plt.bar(positions, metrics_df['True Positive (TP)'], width=bar_width, label='TP', color='green')
