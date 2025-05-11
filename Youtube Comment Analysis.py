@@ -202,12 +202,29 @@ if video_url:
         st.line_chart(time_series_data)
         
         # Assuming `df` is already available
-        y_pred = df['Sentiment']  # assuming this column contains the sentiment predictions
         y_true = ['Positive' if i % 3 == 0 else 'Negative' if i % 3 == 1 else 'Neutral' for i in range(len(df))]  # Placeholder
+        y_pred = np.array(df['Sentiment'])
         
         # Generate the confusion matrix with all three classes
         cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative', 'Neutral'])
         
+        # Extract TN, TP, FP, FN
+        TP = cm[1, 1]  # True Positive
+        TN = cm[0, 0]  # True Negative
+        FP = cm[0, 1]  # False Positive
+        FN = cm[1, 0]  # False Negative
+        
+        # Total count of samples
+        total = np.sum(cm)
+        
+        # Calculate the percentages
+        TN_percentage = (TN / total) * 100
+        TP_percentage = (TP / total) * 100
+        FP_percentage = (FP / total) * 100
+        FN_percentage = (FN / total) * 100
+        
+        # Layout with two columns
+        col1, col2 = st.columns(2)
         # Create two columns for display
         col1, col2 = st.columns(2)
         
@@ -215,47 +232,34 @@ if video_url:
         with col1:
             st.subheader('Confusion Matrix')
             plt.figure(figsize=(5, 4))
-            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
-                        xticklabels=['Positive', 'Negative', 'Neutral'], 
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+                        xticklabels=['Positive', 'Negative', 'Neutral'],
                         yticklabels=['Positive', 'Negative', 'Neutral'])
             plt.title('Confusion Matrix')
             st.pyplot(plt)
         
-        # Calculate TP, FP, FN, TN for each class
-        total = cm.sum()
-        TP = [cm[i, i] for i in range(3)]
-        FP = [cm[:, i].sum() - cm[i, i] for i in range(3)]
-        FN = [cm[i, :].sum() - cm[i, i] for i in range(3)]
-        TN = [total - (TP[i] + FP[i] + FN[i]) for i in range(3)]
-        
-        metrics_data = {
-            'Class': ['Positive', 'Negative', 'Neutral'],
-            'True Positive (TP)': TP,
-            'False Positive (FP)': FP,
-            'False Negative (FN)': FN,
-            'True Negative (TN)': TN
-        }
-        
-        metrics_df = pd.DataFrame(metrics_data)
-        
         # Plot the metrics
         with col2:
-            st.subheader('Confusion Matrix Breakdown')
-            plt.figure(figsize=(6, 5))
+            st.subheader('TN, TP, FP, FN Distribution')
+                
+                # Plotting the values of TN, TP, FP, FN
+                labels = ['True Negative (TN)', 'True Positive (TP)', 'False Positive (FP)', 'False Negative (FN)']
+                values = [TN, TP, FP, FN]
+                percentages = [TN_percentage, TP_percentage, FP_percentage, FN_percentage]
             
-            # Plotting each bar separately for better visibility
-            bar_width = 0.2
-            positions = [0, 1, 2]
+                # Plot
+                plt.figure(figsize=(5, 4))
+                bars = plt.bar(labels, values, color=['green', 'blue', 'red', 'orange'])
             
-            plt.bar(positions, metrics_df['True Positive (TP)'], width=bar_width, label='TP', color='green')
-            plt.bar([p + bar_width for p in positions], metrics_df['False Positive (FP)'], width=bar_width, label='FP', color='red')
-            plt.bar([p + bar_width * 2 for p in positions], metrics_df['False Negative (FN)'], width=bar_width, label='FN', color='orange')
-            plt.bar([p + bar_width * 3 for p in positions], metrics_df['True Negative (TN)'], width=bar_width, label='TN', color='blue')
+                # Add percentages on top of each bar
+                for bar, percentage in zip(bars, percentages):
+                    yval = bar.get_height()
+                    plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.05, f'{percentage:.2f}%', ha='center', va='bottom')
             
-            plt.xticks([p + bar_width * 1.5 for p in positions], metrics_df['Class'])
-            plt.legend()
-            plt.title('TP, FP, FN, TN Breakdown by Class')
-            st.pyplot(plt)
+                plt.title('Confusion Matrix Components')
+                plt.ylabel('Count')
+                plt.xticks(rotation=45)
+                st.pyplot(plt)
 
 
         # WordClouds Side by Side
