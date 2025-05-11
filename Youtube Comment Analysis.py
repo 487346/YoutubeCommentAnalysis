@@ -22,6 +22,8 @@ import joblib
 import os
 from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
+import csv
+from io import StringIO
 
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
@@ -35,22 +37,56 @@ youtube = build('youtube', 'v3', developerKey=API_KEY)
 # User Input for YouTube Video URL
 video_url = st.text_input('Enter YouTube Video URL:', '')
 
-# Button to fetch comments
-if st.button("Fetch Comments"):
-    if video_url:  # Only proceed if there is input
-        video_id = extract_video_id(video_url)
-        if video_id:
-            st.success(f'Video ID extracted: {video_id}')
-            # Proceed with fetching comments
-            df = get_youtube_comments(video_id)
-            if not df.empty:
-                st.success("Comments fetched successfully!")
-            else:
-                st.error("No comments found for this video.")
-        else:
-            st.error('Invalid YouTube URL')
-    else:
-        st.warning('Please enter a YouTube URL.')
+""from flask import Flask, request, send_file
+import pandas as pd
+from googleapiclient.discovery import build
+import os
+
+app = Flask(__name__)
+
+def get_youtube_comments(video_id):
+    youtube = build('youtube', 'v3', developerKey=YOUTUBE_API_KEY)
+    
+    comments_data = {
+        'User': [],
+        'Comment': [],
+        'Timestamp': []
+    }
+    
+    request = youtube.commentThreads().list(
+        part='snippet',
+        videoId=video_id,
+        textFormat='plainText',
+        maxResults=100
+    )
+    
+    while request:
+        response = request.execute()
+        
+        for item in response['items']:
+            snippet = item['snippet']['topLevelComment']['snippet']
+            comments_data['User'].append(snippet['authorDisplayName'])
+            comments_data['Comment'].append(snippet['textDisplay'])
+            comments_data['Timestamp'].append(snippet['publishedAt'])
+        
+        request = youtube.commentThreads().list_next(request, response)
+    
+    df = pd.DataFrame(comments_data)
+    csv_path = 'comments.csv'
+    df.to_csv(csv_path, index=False)
+    return csv_path
+
+@app.route('/download-comments')
+def download_comments():
+    video_id = request.args.get('videoId')
+    if not video_id:
+        return 'Video ID is required', 400
+    
+    csv_path = get_youtube_comments(video_id)
+    return send_file(csv_path, as_attachment=True)
+
+if __name__ == '__main__':
+    app.run(port=5000)
 
 # Extract Video ID
 def extract_video_id(url):
@@ -70,26 +106,78 @@ def extract_video_id(url):
     print("Video ID extraction failed.")  # Debugging line
     return None
 
-# Fetch YouTube Comments with Username
-def get_youtube_comments(video_id):
-    comments = []
-    timestamps = []
-    users = []
+# 2️⃣ Fetch YouTube Comments with Timestamps and Usernames
+def get_youtube_comments(youtube, video_id):
+    all_comments = []  # To store each comment's data
+
+    # Initial API request
     request = youtube.commentThreads().list(
-        part='snippet', 
-        videoId=video_id, 
-        textFormat='plainText', 
+        part='snippet',
+        videoId=video_id,
+        textFormat='plainText',
         maxResults=100
     )
     
+
+    # Execute the request and process the first batch of comments
     response = request.execute()
-    
-    for item in response['items']:
-        comments.append(item['snippet']['topLevelComment']['snippet']['textDisplay'])
-        timestamps.append(item['snippet']['topLevelComment']['snippet']['publishedAt'])
-        users.append(item['snippet']['topLevelComment']['snippet']['authorDisplayName'])  # Fetch username
-    
-    return pd.DataFrame({'User': users, 'Comment': comments, 'Timestamp': pd.to_datetime(timestamps)})
+    print("Fetching comments...")
+
+    # Pagination Loop
+    while response:
+        for item in response['items']:
+            comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+            timestamp = item['snippet']['topLevelComment']['snippet']['publishedAt']
+            username = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
+            all_comments.append({
+                "Comment": comment,
+                "Timestamp": timestamp,
+                "User": username
+            })
+
+        # Check if there is another page of comments
+        if 'nextPageToken' in response:
+            next_page_token = response['nextPageToken']
+            request = youtube.commentThreads().list(
+                part='snippet',
+                videoId=video_id,
+                textFormat='plainText',
+                maxResults=100,
+                pageToken=next_page_token
+            )
+            response = request.execute()
+        else:
+            print(f"All comments fetched: {len(all_comments)}")
+            break
+
+    # Return the complete list of comments
+    return all_comments
+
+# 3️⃣ Main Execution Block
+if __name__ == "__main__":
+    # Provide your YouTube API Key
+    API_KEY = 'YOUR_YOUTUBE_API_KEY'  # <-- Replace with your actual API Key
+    VIDEO_URL = 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID'  # <-- Replace with the actual video URL
+
+    # Extract Video ID from URL
+    video_id = VIDEO_URL.split('v=')[1]
+
+    # Initialize YouTube client
+    youtube = initialize_youtube_client(API_KEY)
+
+    # Fetch comments, timestamps, and users
+    comment_data = get_youtube_comments(youtube, video_id)
+
+    # 4️⃣ Convert to DataFrame
+    df = pd.DataFrame(comment_data)
+
+    # 5️⃣ Save to CSV for future analysis
+    df.to_csv('youtube_comments.csv', index=False)
+    print("\nData saved to youtube_comments.csv")
+
+    # Display DataFrame
+    print("\nSample Data:")
+    print(df.head())
 
 # Data Preprocessing
 def preprocess_text(text):
