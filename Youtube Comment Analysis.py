@@ -52,7 +52,12 @@ if st.button("Fetch Comments"):
 
 # Extract Video ID
 def extract_video_id(url):
+    print(f"URL entered: {url}")  # Debugging line
     video_id = re.search(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*', url)
+    if video_id:
+        print(f"Video ID extracted: {video_id.group(1)}")  # Debugging line
+    else:
+        print("Video ID extraction failed.")  # Debugging line
     return video_id.group(1) if video_id else None
 
 # Fetch YouTube Comments with Username
