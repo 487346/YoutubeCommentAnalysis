@@ -220,27 +220,41 @@ if video_url:
             plt.title('Confusion Matrix')
             st.pyplot(plt)
         
-        # Calculate TP, FP, TN, FN for each class
-        metrics_data = {
-            'Class': ['Positive', 'Negative', 'Neutral'],
-            'True Positive (TP)': [cm[0, 0], cm[1, 1], cm[2, 2]],
-            'False Positive (FP)': [cm[:, 0].sum() - cm[0, 0], cm[:, 1].sum() - cm[1, 1], cm[:, 2].sum() - cm[2, 2]],
-            'False Negative (FN)': [cm[0, :].sum() - cm[0, 0], cm[1, :].sum() - cm[1, 1], cm[2, :].sum() - cm[2, 2]],
-        }
-        
-        metrics_df = pd.DataFrame(metrics_data)
-        
-        # Plot the metrics
-        with col2:
-            st.subheader('Confusion Matrix Breakdown')
-            plt.figure(figsize=(5, 4))
-            sns.barplot(x='Class', y='True Positive (TP)', data=metrics_df, color='green', label='TP')
-            sns.barplot(x='Class', y='False Positive (FP)', data=metrics_df, color='red', label='FP', bottom=metrics_df['True Positive (TP)'])
-            sns.barplot(x='Class', y='False Negative (FN)', data=metrics_df, color='orange', label='FN', 
-                        bottom=metrics_df['True Positive (TP)'] + metrics_df['False Positive (FP)'])
-            plt.legend()
-            plt.title('TP, FP, FN Counts by Class')
-            st.pyplot(plt)
+            # Calculate TP, FP, FN, TN for each class
+            total = cm.sum()
+            TP = [cm[i, i] for i in range(3)]
+            FP = [cm[:, i].sum() - cm[i, i] for i in range(3)]
+            FN = [cm[i, :].sum() - cm[i, i] for i in range(3)]
+            TN = [total - (TP[i] + FP[i] + FN[i]) for i in range(3)]
+            
+            metrics_data = {
+                'Class': ['Positive', 'Negative', 'Neutral'],
+                'True Positive (TP)': TP,
+                'False Positive (FP)': FP,
+                'False Negative (FN)': FN,
+                'True Negative (TN)': TN
+            }
+            
+            metrics_df = pd.DataFrame(metrics_data)
+            
+            # Plot the metrics
+            with col2:
+                st.subheader('Confusion Matrix Breakdown')
+                plt.figure(figsize=(6, 5))
+                
+                # Plotting each bar separately for better visibility
+                bar_width = 0.2
+                positions = [0, 1, 2]
+                
+                plt.bar(positions, metrics_df['True Positive (TP)'], width=bar_width, label='TP', color='green')
+                plt.bar([p + bar_width for p in positions], metrics_df['False Positive (FP)'], width=bar_width, label='FP', color='red')
+                plt.bar([p + bar_width * 2 for p in positions], metrics_df['False Negative (FN)'], width=bar_width, label='FN', color='orange')
+                plt.bar([p + bar_width * 3 for p in positions], metrics_df['True Negative (TN)'], width=bar_width, label='TN', color='blue')
+                
+                plt.xticks([p + bar_width * 1.5 for p in positions], metrics_df['Class'])
+                plt.legend()
+                plt.title('TP, FP, FN, TN Breakdown by Class')
+                st.pyplot(plt)
 
         # WordClouds Side by Side
         st.subheader('Word Clouds of Positive and Negative Comments')
