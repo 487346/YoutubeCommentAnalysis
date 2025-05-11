@@ -113,34 +113,7 @@ if video_url:
         model = SVC(kernel='linear')
         model.fit(X, ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))])
         df['Sentiment'] = model.predict(X)
-
-        # Display Metrics Side by Side
-        st.subheader('Sentiment Analysis Overview')
-        
-        # Creating Columns for Side by Side Display
-        col1, col2 = st.columns(2)
-        
-        # Sentiment Distribution Bar Chart
-        with col1:
-            st.markdown("### Sentiment Distribution")
-            sentiment_counts = df['Sentiment'].value_counts()
-            plt.figure(figsize=(5, 4))
-            sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
-            plt.title("Number of Comments per Sentiment")
-            plt.ylabel('Count')
-            plt.xlabel('Sentiment')
-            for i, v in enumerate(sentiment_counts.values):
-                plt.text(i, v + 1, str(v), ha='center')
-            st.pyplot(plt)
-        
-        # Sentiment Split Pie Chart
-        with col2:
-            st.markdown("### Sentiment Split")
-            plt.figure(figsize=(5, 4))
-            plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
-            st.pyplot(plt)
             
-        
         # Initialize VADER
         sia = SentimentIntensityAnalyzer()
         
@@ -214,13 +187,23 @@ if video_url:
         time_series_data = df.groupby(['Date', 'Sentiment']).size().unstack(fill_value=0)
         st.line_chart(time_series_data)
 
-        # Confusion Matrix
-        st.subheader('Confusion Matrix')
-        y_pred = df['Sentiment']
-        y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]
-        cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
-        st.pyplot(plt)
+        # Create two columns
+        col1, col2 = st.columns(2)
+        
+        # Confusion Matrix for predicted vs. true sentiment
+        with col1:
+            st.subheader('Confusion Matrix')
+            y_pred = df['Sentiment']  # assuming this column contains the sentiment predictions
+            y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]  # Placeholder for actual labels
+            cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
+        
+        # Add another visual/metric (optional)
+        with col2:
+            # Plot confusion matrix
+            plt.figure(figsize=(6, 5))
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
+            plt.title('Confusion Matrix')
+            st.pyplot(plt)
 
         # WordClouds Side by Side
         st.subheader('Word Clouds of Positive and Negative Comments')
