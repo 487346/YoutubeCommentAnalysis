@@ -24,6 +24,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 import csv
 from io import StringIO
+from flask import Flask, request, send_file
 
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
@@ -36,11 +37,6 @@ youtube = build('youtube', 'v3', developerKey=API_KEY)
 
 # User Input for YouTube Video URL
 video_url = st.text_input('Enter YouTube Video URL:', '')
-
-""from flask import Flask, request, send_file
-import pandas as pd
-from googleapiclient.discovery import build
-import os
 
 app = Flask(__name__)
 
