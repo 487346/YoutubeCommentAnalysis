@@ -125,7 +125,7 @@ if video_url:
             ax2.set_ylabel('Comment Count')
             st.pyplot(fig2)
 
-                # ---- Spam Detection & Analysis ----
+         # ---- Spam Detection & Analysis ----
         st.subheader('🚫 Spam Detection & Analysis')
         
         # Enhanced Heuristic-based Spam Detection
@@ -171,23 +171,16 @@ if video_url:
         # Display Spam Comments
         spam_comments = df[df['Is_Spam']]
         
-        # 🏷️ Check the column names and update accordingly
-        st.write(df.columns)  # See what the columns are named
-        
-        # If the column is not named 'Author', replace it with the correct name
+        # If there are spam comments
         if not spam_comments.empty:
             st.markdown("### 🚩 Detected Spam Comments and Usernames")
             
-            # Adjust the column names here
-            if 'AuthorDisplayName' in spam_comments.columns:
-                spam_comments.rename(columns={'AuthorDisplayName': 'Author'}, inplace=True)
-            
-            # Display the data
-            st.dataframe(spam_comments[['Author', 'Comment']])
+            # ✅ Column names are corrected to 'User' and 'Comment'
+            st.dataframe(spam_comments[['User', 'Comment']])
             
             # ---- Top Spam Commenters ----
             st.markdown("### 🏆 Top Spam Commenters")
-            top_spammers = spam_comments['Author'].value_counts().head(10).reset_index()
+            top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
             top_spammers.columns = ['Username', 'Spam Count']
             st.write(top_spammers)
         else:
