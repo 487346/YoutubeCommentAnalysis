@@ -33,6 +33,19 @@ youtube = build('youtube', 'v3', developerKey=API_KEY)
 # User Input for YouTube Video URL
 video_url = st.text_input('Enter YouTube Video URL:', '')
 
+if video_url:  # Only proceed if there is input
+    video_id = extract_video_id(video_url)
+    if video_id:
+        st.success(f'Video ID extracted: {video_id}')
+        # Proceed with fetching comments
+        df = get_youtube_comments(video_id)
+        if not df.empty:
+            st.success("Comments fetched successfully!")
+        else:
+            st.error("No comments found for this video.")
+    else:
+        st.error('Invalid YouTube URL')
+
 # Extract Video ID
 def extract_video_id(url):
     video_id = re.search(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*', url)
