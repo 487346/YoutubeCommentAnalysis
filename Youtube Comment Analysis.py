@@ -169,8 +169,8 @@ def detect_spam(comment):
 # Apply the new spam detection on YouTube comments
 df['Spam'] = df['Comment'].apply(detect_spam)
         
-        # ---- Display Spam Comments and Analysis ----
-        st.subheader('🚫 Spam Detection & Analysis')
+# ---- Display Spam Comments and Analysis ----
+st.subheader('🚫 Spam Detection & Analysis')
         
         # Visualization
         spam_counts = df['Spam'].value_counts()
