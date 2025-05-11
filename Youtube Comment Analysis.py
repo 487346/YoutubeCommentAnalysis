@@ -168,26 +168,30 @@ if video_url:
         plt.xlabel('Comment Type')
         st.pyplot(fig)
         
-        # ---- Display Spam Comments ----
+        # Display Spam Comments
         spam_comments = df[df['Is_Spam']]
         
+        # 🏷️ Check the column names and update accordingly
+        st.write(df.columns)  # See what the columns are named
+        
+        # If the column is not named 'Author', replace it with the correct name
         if not spam_comments.empty:
             st.markdown("### 🚩 Detected Spam Comments and Usernames")
+            
+            # Adjust the column names here
+            if 'AuthorDisplayName' in spam_comments.columns:
+                spam_comments.rename(columns={'AuthorDisplayName': 'Author'}, inplace=True)
+            
+            # Display the data
             st.dataframe(spam_comments[['Author', 'Comment']])
-        
+            
             # ---- Top Spam Commenters ----
             st.markdown("### 🏆 Top Spam Commenters")
             top_spammers = spam_comments['Author'].value_counts().head(10).reset_index()
             top_spammers.columns = ['Username', 'Spam Count']
             st.write(top_spammers)
-            
-            # ---- Spam Ratio Analysis ----
-            spam_ratio = len(spam_comments) / len(df) * 100
-            st.markdown(f"### 📊 Spam Ratio: **{spam_ratio:.2f}%** of all comments are detected as spam.")
         else:
             st.success("No spam comments detected! 🎉")
-
-
 
         # ---- Influential Commenters Analysis ----
         st.subheader('🔥 Influential Commenters Analysis')
