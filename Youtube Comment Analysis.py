@@ -206,6 +206,7 @@ if video_url:
         
         # Generate the confusion matrix with all three classes
         cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative', 'Neutral'])
+        total = cm.sum() if cm.size > 0 else 1
         
         # Create two columns for display
         col1, col2 = st.columns(2)
