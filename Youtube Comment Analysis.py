@@ -38,16 +38,26 @@ def extract_video_id(url):
     video_id = re.search(r'(?:v=|\/)([0-9A-Za-z_-]{11}).*', url)
     return video_id.group(1) if video_id else None
 
-# Fetch YouTube Comments
+# Fetch YouTube Comments with Username
 def get_youtube_comments(video_id):
     comments = []
     timestamps = []
-    request = youtube.commentThreads().list(part='snippet', videoId=video_id, textFormat='plainText', maxResults=100)
+    users = []
+    request = youtube.commentThreads().list(
+        part='snippet', 
+        videoId=video_id, 
+        textFormat='plainText', 
+        maxResults=100
+    )
+    
     response = request.execute()
+    
     for item in response['items']:
         comments.append(item['snippet']['topLevelComment']['snippet']['textDisplay'])
         timestamps.append(item['snippet']['topLevelComment']['snippet']['publishedAt'])
-    return pd.DataFrame({'Comment': comments, 'Timestamp': pd.to_datetime(timestamps)})
+        users.append(item['snippet']['topLevelComment']['snippet']['authorDisplayName'])  # Fetch username
+    
+    return pd.DataFrame({'User': users, 'Comment': comments, 'Timestamp': pd.to_datetime(timestamps)})
 
 # Data Preprocessing
 def preprocess_text(text):
