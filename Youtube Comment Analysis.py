@@ -157,7 +157,7 @@ if video_url:
         
         # Sentiment Distribution Bar Chart
         with col1:
-            plt.figure(figsize=(4, 3.6))
+            plt.figure(figsize=(4, 4))
             sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
             plt.title("Number of Comments per Sentiment")
             plt.ylabel('Count')
