@@ -254,6 +254,9 @@ if video_url:
             
             # Plotting each bar separately for better visibility
             bar_width = 0.2
+            st.write("Metrics DataFrame Preview:")
+            st.write(metrics_df)
+            st.write("Length of Classes:", len(metrics_df['Class']))
             positions = np.arange(len(metrics_df['Class'])) if not metrics_df.empty else np.array([0])
             
             # Bars
