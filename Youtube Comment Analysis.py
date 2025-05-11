@@ -131,30 +131,33 @@ if video_url:
         if 'df' in locals():
             df['Sentiment'] = df['Processed_Comment'].apply(detect_sentiment)
         
+        # Initialize VADER
+        sia = SentimentIntensityAnalyzer()
+        
+        # Function to determine sentiment
+        def detect_sentiment(comment):
+            score = sia.polarity_scores(comment)
+            if score['compound'] > 0.05:
+                return 'Positive'
+            elif score['compound'] < -0.05:
+                return 'Negative'
+            else:
+                return 'Neutral'
+        
+        # Apply sentiment detection to each comment if df exists
+        if 'df' in locals():
+            df['Sentiment'] = df['Processed_Comment'].apply(detect_sentiment)
+        
         # Display sentiment distribution
         st.subheader('Sentiment Analysis Overview')
         sentiment_counts = df['Sentiment'].value_counts()
-        
-        # Inject CSS for equal height columns
-        st.markdown("""
-            <style>
-            div[data-testid="stVerticalBlock"] > div {
-                display: flex;
-                justify-content: space-between;
-            }
-            div[data-testid="stVerticalBlock"] > div > div {
-                flex: 1 1 0;
-                margin-right: 10px;
-            }
-            </style>
-            """, unsafe_allow_html=True)
         
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
         # Sentiment Distribution Bar Chart
         with col1:
-            plt.figure(figsize=(5, 4))
+            plt.figure(figsize=(4.5, 4.5))
             sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
             plt.title("Number of Comments per Sentiment")
             plt.ylabel('Count')
@@ -164,14 +167,11 @@ if video_url:
         # Sentiment Split Pie Chart
         with col2:
             st.markdown("### Sentiment Split")
-            plt.figure(figsize=(5, 4))
+            plt.figure(figsize=(4.5, 4.5))  # Changed to square size for better look
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%',
                     colors=['#66b3ff', '#99ff99', '#ff9999'])
+            plt.gca().set_aspect('equal')  # This keeps the pie chart circular
             st.pyplot(plt)
-            
-
-        # ---- Top 10 Positive and Negative Comments ----
-        st.subheader('Top 10 Positive and Negative Comments')
         
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
