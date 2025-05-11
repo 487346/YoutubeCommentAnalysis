@@ -94,14 +94,6 @@ if video_url:
         df['Sentiment'] = sentiment_analysis(df['Processed_Comment'])
         df['Spam'] = df['Comment'].apply(detect_spam)
 
-        # ---- Influential Commenters Analysis ----
-        st.subheader('🔥 Influential Commenters Analysis')
-        top_commenters = df.groupby('User').agg({
-            'Comment': 'count',
-            'Likes': 'sum'
-        }).sort_values(by='Comment', ascending=False).head(10).reset_index()
-        st.write(top_commenters)
-
         # ---- Sentiment Distribution ----
         st.subheader('📊 Sentiment Distribution')
         fig, ax = plt.subplots()
@@ -123,18 +115,40 @@ if video_url:
         spam_counts = df['Spam'].value_counts()
         st.bar_chart(spam_counts)
 
+        # ---- Influential Commenters Analysis ----
+        st.subheader('🔥 Influential Commenters Analysis')
+        top_commenters = df.groupby('User').agg({
+            'Comment': 'count',
+            'Likes': 'sum'
+        }).sort_values(by='Comment', ascending=False).head(10).reset_index()
+        st.write(top_commenters)
+
         # ---- Topic Modeling (LDA) ----
         st.subheader('🧠 Topic Modeling (LDA)')
+        
+        # Vectorizing the text data
         vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
         X = vectorizer.fit_transform(df['Processed_Comment'])
         
+        # Applying LDA
         lda_model = LatentDirichletAllocation(n_components=5, random_state=42)
         lda_model.fit(X)
-
-        # Display Topics
+        
+        # Display Topics in a DataFrame
         terms = vectorizer.get_feature_names_out()
+        topics = {}
+        
         for idx, topic in enumerate(lda_model.components_):
-            st.write(f"**Topic #{idx + 1}:**", [terms[i] for i in topic.argsort()[-5:]])
+            topic_words = [terms[i] for i in topic.argsort()[-5:]]
+            topics[f"Topic #{idx + 1}"] = topic_words
+        
+        # Convert dictionary to DataFrame
+        topics_df = pd.DataFrame(topics)
+        topics_df.index = [f"Word {i+1}" for i in range(topics_df.shape[0])]
+        
+        # Display as a table
+        st.table(topics_df)
+
 
         # ---- Time-Series Analysis ----
         st.subheader('⏳ Time-Series Analysis of Sentiments')
