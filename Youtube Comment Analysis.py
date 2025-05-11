@@ -125,43 +125,68 @@ if video_url:
             ax2.set_ylabel('Comment Count')
             st.pyplot(fig2)
 
-        # ---- Spam Detection Visualization ----
-        st.subheader('⚠️ Spam Detection Analysis')
-        spam_counts = df['Spam'].value_counts()
-        st.bar_chart(spam_counts)
-        
-         # ---- Spam Detection & Analysis ----
+                # ---- Spam Detection & Analysis ----
         st.subheader('🚫 Spam Detection & Analysis')
         
-        # Heuristic-based Spam Detection
+        # Enhanced Heuristic-based Spam Detection
         def detect_spam(comment):
-            spam_keywords = ['http', 'www', 'subscribe', 'buy', 'check out', 'free', 'offer', 'discount', 'click', 'cheap']
+            spam_keywords = [
+                'http', 'www', 'subscribe', 'buy', 'check out', 'free', 'offer', 
+                'discount', 'click', 'cheap', 'sale', 'earn money', 'promo', 'visit my channel'
+            ]
+            suspicious_patterns = [
+                r'\b\d{10,}\b',              # Long numerical strings (like phone numbers)
+                r'\S+@\S+\.\S+',             # Email addresses
+                r'(.)\1{4,}',                # Repeated characters like "!!!!!" or "????"
+                r'[A-Z]{5,}',                # Excessive uppercase
+                r'[$%^&*()<>?/|}{~:]',       # Special characters used excessively
+                r'[^\x00-\x7F]+'             # Non-ASCII characters (non-English or gibberish)
+            ]
+            
+            # Heuristic checks
             if any(keyword in comment.lower() for keyword in spam_keywords):
                 return True
-            if len(comment.split()) < 3:  # Very short comments are often spam
+            if len(comment.split()) < 3:  
                 return True
-            if len(set(comment.split())) < len(comment.split()) / 2:  # Too many repeated words
+            if len(set(comment.split())) < len(comment.split()) / 2:  
+                return True
+            if any(re.search(pattern, comment) for pattern in suspicious_patterns):
                 return True
             return False
         
         # Apply Spam Detection
         df['Is_Spam'] = df['Comment'].apply(detect_spam)
         
-        # Display Spam Comments
+        # ---- Visualization of Spam Detection ----
+        st.markdown("### 🔎 Spam vs. Non-Spam Comments")
+        spam_counts = df['Is_Spam'].value_counts()
+        fig, ax = plt.subplots()
+        sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
+        plt.title("Spam Detection Overview")
+        plt.xticks([0, 1], ['Non-Spam', 'Spam'])
+        plt.ylabel('Number of Comments')
+        plt.xlabel('Comment Type')
+        st.pyplot(fig)
+        
+        # ---- Display Spam Comments ----
         spam_comments = df[df['Is_Spam']]
         
-        # Show the usernames and their spam comments
         if not spam_comments.empty:
             st.markdown("### 🚩 Detected Spam Comments and Usernames")
-            st.write(spam_comments[['Comment', 'Is_Spam']])
+            st.dataframe(spam_comments[['Author', 'Comment']])
         
-            # Display a list of usernames with most spam comments
-            st.markdown("### 🔎 Top Spam Commenters")
-            top_spammers = spam_comments['Username'].value_counts().head(10).reset_index()
+            # ---- Top Spam Commenters ----
+            st.markdown("### 🏆 Top Spam Commenters")
+            top_spammers = spam_comments['Author'].value_counts().head(10).reset_index()
             top_spammers.columns = ['Username', 'Spam Count']
             st.write(top_spammers)
+            
+            # ---- Spam Ratio Analysis ----
+            spam_ratio = len(spam_comments) / len(df) * 100
+            st.markdown(f"### 📊 Spam Ratio: **{spam_ratio:.2f}%** of all comments are detected as spam.")
         else:
             st.success("No spam comments detected! 🎉")
+
 
 
         # ---- Influential Commenters Analysis ----
