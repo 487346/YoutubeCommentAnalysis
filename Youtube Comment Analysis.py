@@ -172,22 +172,25 @@ if video_url:
             plt.gca().set_aspect('equal')  # This keeps the pie chart circular
             st.pyplot(plt)
         
-        # Creating Columns for Side by Side Display
+        
+        # Filter Top 10 Positive and Negative Comments
+        top_positive_comments = df[df['Sentiment'] == 'Positive'][['Comment']].head(10).reset_index(drop=True)
+        top_negative_comments = df[df['Sentiment'] == 'Negative'][['Comment']].head(10).reset_index(drop=True)
+        
+        # Assign proper column names
+        top_positive_comments.columns = ['Top 10 Positive Comments']
+        top_negative_comments.columns = ['Top 10 Negative Comments']
+        
+        # Layout with two columns
         col1, col2 = st.columns(2)
         
-        
-        # Top 10 Positive Comments
         with col1:
             st.markdown("### Top 10 Positive Comments")
-            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-                st.write(f"- {comment}")
+            st.table(top_positive_comments)
         
-        # Top 10 Negative Comments
         with col2:
             st.markdown("### Top 10 Negative Comments")
-            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-                st.write(f"- {comment}")
-
+            st.table(top_negative_comments)
 
         # Most Common Words
         st.subheader('Most Common Words')
