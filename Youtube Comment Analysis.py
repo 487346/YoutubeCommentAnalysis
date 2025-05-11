@@ -76,13 +76,6 @@ def sentiment_analysis(comments):
             sentiments.append('Neutral')
     return sentiments
 
-# ---- Spam Detection ----
-def detect_spam(comment):
-    spam_keywords = ['free', 'click here', 'subscribe', 'visit', 'buy now', 'check out']
-    if any(keyword in comment.lower() for keyword in spam_keywords):
-        return 'Spam'
-    else:
-        return 'Not Spam'
 
 # ---- Main Logic ----
 if video_url:
@@ -125,60 +118,78 @@ if video_url:
             ax2.set_ylabel('Comment Count')
             st.pyplot(fig2)
 
-        # ---- Enhanced Heuristic-based Spam Detection ----
+# ---- Imports for ML ----
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+import joblib
+
+# ---- Pre-trained Spam Detection Model Loading ----
+@st.cache_resource
+def load_spam_model():
+    # Check if the model is already saved, otherwise train and save it
+    try:
+        vectorizer = joblib.load("tfidf_vectorizer.pkl")
+        model = joblib.load("spam_detector_model.pkl")
+    except:
+        # Sample Spam Dataset (replace with any spam dataset you have)
+        data = pd.read_csv("https://raw.githubusercontent.com/justmarkham/DAT8/master/data/sms.tsv", sep='\t', header=None)
+        data.columns = ['Label', 'Message']
+
+        # Vectorization
+        vectorizer = TfidfVectorizer(stop_words='english')
+        X = vectorizer.fit_transform(data['Message'])
+        y = data['Label'].map({'ham': 0, 'spam': 1})
+
+        # Train-Test Split
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+        # Model Training
+        model = MultinomialNB()
+        model.fit(X_train, y_train)
+
+        # Saving the model for future use
+        joblib.dump(vectorizer, "tfidf_vectorizer.pkl")
+        joblib.dump(model, "spam_detector_model.pkl")
+
+        # Model Evaluation
+        predictions = model.predict(X_test)
+        st.write("Spam Detection Model Accuracy:", accuracy_score(y_test, predictions))
+
+    return vectorizer, model
+
+        # Load the pre-trained model
+        tfidf_vectorizer, spam_detector_model = load_spam_model()
+        
+        # ---- Enhanced Spam Detection ----
         def detect_spam(comment):
-            spam_keywords = [
-                'http', 'www', 'subscribe', 'buy', 'check out', 'free', 'offer', 
-                'discount', 'click', 'cheap', 'sale', 'earn money', 'promo', 'visit my channel'
-            ]
-            suspicious_patterns = [
-                r'\b\d{10,}\b',              # Long numerical strings (like phone numbers)
-                r'\S+@\S+\.\S+',             # Email addresses
-                r'(.)\1{4,}',                # Repeated characters like "!!!!!" or "????"
-                r'[A-Z]{5,}',                # Excessive uppercase
-                r'[$%^&*()<>?/|}{~:]',       # Special characters used excessively
-                r'[^\x00-\x7F]+'             # Non-ASCII characters (non-English or gibberish)
-            ]
-            
-            # --- Heuristic checks ---
-            # Only flag comments with 3 or fewer words if they also match spam keywords
-            if len(comment.split()) < 3 and any(keyword in comment.lower() for keyword in spam_keywords):
-                return True
-            
-            # Repetitive word check (relaxing the condition)
-            if len(set(comment.split())) < len(comment.split()) / 3:  # Changed from /2 to /3
-                return True
+            """ Use pre-trained model to detect spam """
+            comment_transformed = tfidf_vectorizer.transform([comment])
+            prediction = spam_detector_model.predict(comment_transformed)
+            return 'Spam' if prediction[0] == 1 else 'Not Spam'
         
-            # Apply suspicious patterns
-            if any(re.search(pattern, comment) for pattern in suspicious_patterns):
-                return True
-            
-            return False
+        # Apply the new spam detection on YouTube comments
+        df['Spam'] = df['Comment'].apply(detect_spam)
         
-        # Apply Spam Detection
-        df['Is_Spam'] = df['Comment'].apply(detect_spam)
+        # ---- Display Spam Comments and Analysis ----
+        st.subheader('🚫 Spam Detection & Analysis')
         
-        # ---- Visualization of Spam Detection ----
-        st.markdown("### 🔎 Spam vs. Non-Spam Comments")
-        spam_counts = df['Is_Spam'].value_counts()
+        # Visualization
+        spam_counts = df['Spam'].value_counts()
         fig, ax = plt.subplots()
         sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
         plt.title("Spam Detection Overview")
-        plt.xticks([0, 1], ['Non-Spam', 'Spam'])
         plt.ylabel('Number of Comments')
         plt.xlabel('Comment Type')
         st.pyplot(fig)
         
         # Display Spam Comments
-        spam_comments = df[df['Is_Spam']]
-        
-        # If there are spam comments
+        spam_comments = df[df['Spam'] == 'Spam']
         if not spam_comments.empty:
             st.markdown("### 🚩 Detected Spam Comments and Usernames")
-            
-            # ✅ Column names are corrected to 'User' and 'Comment'
             st.dataframe(spam_comments[['User', 'Comment']])
-            
+        
             # ---- Top Spam Commenters ----
             st.markdown("### 🏆 Top Spam Commenters")
             top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
@@ -186,6 +197,7 @@ if video_url:
             st.write(top_spammers)
         else:
             st.success("No spam comments detected! 🎉")
+
 
         # ---- Influential Commenters Analysis ----
         st.subheader('🔥 Influential Commenters Analysis')
