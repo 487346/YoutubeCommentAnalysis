@@ -156,23 +156,23 @@ if video_url:
             st.pyplot(plt)
             
 
-            # ---- Top 10 Positive and Negative Comments ----
-            st.subheader('Top 10 Positive and Negative Comments')
-            
-            # Creating Columns for Side by Side Display
-            col1, col2 = st.columns(2)
-            
-            # Top 10 Positive Comments
-            with col1:
-                st.markdown("### Top 10 Positive Comments")
-                for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-                    st.write(f"- {comment}")
-            
-            # Top 10 Negative Comments
-            with col2:
-                st.markdown("### Top 10 Negative Comments")
-                for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-                    st.write(f"- {comment}")
+        # ---- Top 10 Positive and Negative Comments ----
+        st.subheader('Top 10 Positive and Negative Comments')
+        
+        # Creating Columns for Side by Side Display
+        col1, col2 = st.columns(2)
+        
+        # Top 10 Positive Comments
+        with col1:
+            st.markdown("### Top 10 Positive Comments")
+            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
+                st.write(f"- {comment}")
+        
+        # Top 10 Negative Comments
+        with col2:
+            st.markdown("### Top 10 Negative Comments")
+            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
+                st.write(f"- {comment}")
 
 
         # Most Common Words
