@@ -21,6 +21,7 @@ import re
 import joblib
 import os
 from nltk.sentiment import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
 
 # Initialize Streamlit App
 st.set_page_config(page_title='Vibes Pie - YouTube Sentiment Analysis', layout='wide')
