@@ -154,6 +154,10 @@ if video_url:
             plt.figure(figsize=(5, 4))
             plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
+        
+        # Optional: Add a small empty element to fill any space in the shorter column
+        with col1:
+            st.empty()  # This can be placed after the plot if needed, to balance the column height
             
 
         # ---- Top 10 Positive and Negative Comments ----
