@@ -213,14 +213,33 @@ if video_url:
         # Display Confusion Matrix
         with col1:
             st.subheader('Confusion Matrix')
-        
-        # Plot the Confusion Matrix in the second column
-        with col2:
             plt.figure(figsize=(5, 4))
             sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
                         xticklabels=['Positive', 'Negative', 'Neutral'], 
                         yticklabels=['Positive', 'Negative', 'Neutral'])
             plt.title('Confusion Matrix')
+            st.pyplot(plt)
+        
+        # Calculate TP, FP, TN, FN for each class
+        metrics_data = {
+            'Class': ['Positive', 'Negative', 'Neutral'],
+            'True Positive (TP)': [cm[0, 0], cm[1, 1], cm[2, 2]],
+            'False Positive (FP)': [cm[:, 0].sum() - cm[0, 0], cm[:, 1].sum() - cm[1, 1], cm[:, 2].sum() - cm[2, 2]],
+            'False Negative (FN)': [cm[0, :].sum() - cm[0, 0], cm[1, :].sum() - cm[1, 1], cm[2, :].sum() - cm[2, 2]],
+        }
+        
+        metrics_df = pd.DataFrame(metrics_data)
+        
+        # Plot the metrics
+        with col2:
+            st.subheader('Confusion Matrix Breakdown')
+            plt.figure(figsize=(5, 4))
+            sns.barplot(x='Class', y='True Positive (TP)', data=metrics_df, color='green', label='TP')
+            sns.barplot(x='Class', y='False Positive (FP)', data=metrics_df, color='red', label='FP', bottom=metrics_df['True Positive (TP)'])
+            sns.barplot(x='Class', y='False Negative (FN)', data=metrics_df, color='orange', label='FN', 
+                        bottom=metrics_df['True Positive (TP)'] + metrics_df['False Positive (FP)'])
+            plt.legend()
+            plt.title('TP, FP, FN Counts by Class')
             st.pyplot(plt)
 
         # WordClouds Side by Side
