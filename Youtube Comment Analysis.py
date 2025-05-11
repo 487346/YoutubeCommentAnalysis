@@ -18,6 +18,11 @@ from sklearn.decomposition import LatentDirichletAllocation
 import nltk
 from nltk.corpus import stopwords
 import re
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+import joblib
 nltk.download('stopwords')
 
 # ---- Streamlit App Configurations ----
@@ -118,13 +123,6 @@ if video_url:
             ax2.set_ylabel('Comment Count')
             st.pyplot(fig2)
 
-# ---- Imports for ML ----
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report, accuracy_score
-import joblib
-
 # ---- Pre-trained Spam Detection Model Loading ----
 @st.cache_resource
 def load_spam_model():
@@ -154,20 +152,19 @@ def load_spam_model():
         joblib.dump(model, "spam_detector_model.pkl")
 
         # Model Evaluation
-        predictions = model.predict(X_test)
         st.write("Spam Detection Model Accuracy:", accuracy_score(y_test, predictions))
 
     return vectorizer, model
 
-        # Load the pre-trained model
-        tfidf_vectorizer, spam_detector_model = load_spam_model()
-        
-        # ---- Enhanced Spam Detection ----
-        def detect_spam(comment):
-            """ Use pre-trained model to detect spam """
-            comment_transformed = tfidf_vectorizer.transform([comment])
-            prediction = spam_detector_model.predict(comment_transformed)
-            return 'Spam' if prediction[0] == 1 else 'Not Spam'
+# 🚀 Load the pre-trained model outside the if condition
+tfidf_vectorizer, spam_detector_model = load_spam_model()
+
+# ---- Enhanced Spam Detection ----
+def detect_spam(comment):
+    """ Use pre-trained model to detect spam """
+    comment_transformed = tfidf_vectorizer.transform([comment])
+    prediction = spam_detector_model.predict(comment_transformed)
+    return 'Spam' if prediction[0] == 1 else 'Not Spam'
         
         # Apply the new spam detection on YouTube comments
         df['Spam'] = df['Comment'].apply(detect_spam)
