@@ -172,8 +172,8 @@ df['Spam'] = df['Comment'].apply(detect_spam)
 # ---- Display Spam Comments and Analysis ----
 st.subheader('🚫 Spam Detection & Analysis')
         
-        # Visualization
-        spam_counts = df['Spam'].value_counts()
+# Visualization
+spam_counts = df['Spam'].value_counts()
         fig, ax = plt.subplots()
         sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
         plt.title("Spam Detection Overview")
