@@ -127,20 +127,33 @@ if video_url:
             else:
                 return 'Neutral'
         
-        # Apply sentiment detection to each comment
+        # Apply sentiment detection to each comment if df exists
         if 'df' in locals():
             df['Sentiment'] = df['Processed_Comment'].apply(detect_sentiment)
-            
+        
         # Display sentiment distribution
         st.subheader('Sentiment Analysis Overview')
         sentiment_counts = df['Sentiment'].value_counts()
+        
+        # Inject CSS for equal height columns
+        st.markdown("""
+            <style>
+            div[data-testid="stVerticalBlock"] > div {
+                display: flex;
+                justify-content: space-between;
+            }
+            div[data-testid="stVerticalBlock"] > div > div {
+                flex: 1 1 0;
+                margin-right: 10px;
+            }
+            </style>
+            """, unsafe_allow_html=True)
         
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
         # Sentiment Distribution Bar Chart
         with col1:
-            # Plot the results
             plt.figure(figsize=(5, 4))
             sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values, palette='Set2')
             plt.title("Number of Comments per Sentiment")
@@ -152,12 +165,9 @@ if video_url:
         with col2:
             st.markdown("### Sentiment Split")
             plt.figure(figsize=(5, 4))
-            plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%', colors=['#66b3ff', '#99ff99', '#ff9999'])
+            plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%',
+                    colors=['#66b3ff', '#99ff99', '#ff9999'])
             st.pyplot(plt)
-        
-        # Optional: Add a small empty element to fill any space in the shorter column
-        with col1:
-            st.empty()  # This can be placed after the plot if needed, to balance the column height
             
 
         # ---- Top 10 Positive and Negative Comments ----
