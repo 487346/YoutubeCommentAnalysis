@@ -131,9 +131,9 @@ if video_url:
         if 'df' in locals():
             df['Sentiment'] = df['Processed_Comment'].apply(detect_sentiment)
             
-            # Display sentiment distribution
-            st.subheader('Sentiment Analysis Overview')
-            sentiment_counts = df['Sentiment'].value_counts()
+        # Display sentiment distribution
+        st.subheader('Sentiment Analysis Overview')
+        sentiment_counts = df['Sentiment'].value_counts()
         
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
