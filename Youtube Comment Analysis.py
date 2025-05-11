@@ -2,7 +2,6 @@
 # coding: utf-8
 
 # In[ ]:
-@st.cache_resource
 import sys
 import subprocess
 from googleapiclient.discovery import build
