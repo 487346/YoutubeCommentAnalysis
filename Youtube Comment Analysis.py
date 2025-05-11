@@ -245,24 +245,24 @@ if video_url:
         with col2:
             st.subheader('TN, TP, FP, FN Distribution')
                 
-                # Plotting the values of TN, TP, FP, FN
-                labels = ['True Negative (TN)', 'True Positive (TP)', 'False Positive (FP)', 'False Negative (FN)']
-                values = [TN, TP, FP, FN]
-                percentages = [TN_percentage, TP_percentage, FP_percentage, FN_percentage]
-            
-                # Plot
-                plt.figure(figsize=(5, 4))
-                bars = plt.bar(labels, values, color=['green', 'blue', 'red', 'orange'])
-            
-                # Add percentages on top of each bar
-                for bar, percentage in zip(bars, percentages):
-                    yval = bar.get_height()
-                    plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.05, f'{percentage:.2f}%', ha='center', va='bottom')
-            
-                plt.title('Confusion Matrix Components')
-                plt.ylabel('Count')
-                plt.xticks(rotation=45)
-                st.pyplot(plt)
+            # Plotting the values of TN, TP, FP, FN
+            labels = ['True Negative (TN)', 'True Positive (TP)', 'False Positive (FP)', 'False Negative (FN)']
+            values = [TN, TP, FP, FN]
+            percentages = [TN_percentage, TP_percentage, FP_percentage, FN_percentage]
+        
+            # Plot
+            plt.figure(figsize=(5, 4))
+            bars = plt.bar(labels, values, color=['green', 'blue', 'red', 'orange'])
+        
+            # Add percentages on top of each bar
+            for bar, percentage in zip(bars, percentages):
+                yval = bar.get_height()
+                plt.text(bar.get_x() + bar.get_width() / 2, yval + 0.05, f'{percentage:.2f}%', ha='center', va='bottom')
+        
+            plt.title('Confusion Matrix Components')
+            plt.ylabel('Count')
+            plt.xticks(rotation=45)
+            st.pyplot(plt)
 
 
         # WordClouds Side by Side
