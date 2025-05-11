@@ -149,14 +149,9 @@ def get_youtube_comments(youtube, video_id):
     # Return the complete list of comments
     return all_comments
 
-# 3️⃣ Main Execution Block
-if __name__ == "__main__":
-    # Provide your YouTube API Key
-    API_KEY = 'YOUR_YOUTUBE_API_KEY'  # <-- Replace with your actual API Key
-    VIDEO_URL = 'https://www.youtube.com/watch?v=YOUR_VIDEO_ID'  # <-- Replace with the actual video URL
 
     # Extract Video ID from URL
-    video_id = VIDEO_URL.split('v=')[1]
+    video_id = video_url.split('v=')[1]
 
     # Initialize YouTube client
     youtube = initialize_youtube_client(API_KEY)
