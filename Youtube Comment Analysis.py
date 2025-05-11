@@ -130,7 +130,7 @@ if video_url:
         spam_counts = df['Spam'].value_counts()
         st.bar_chart(spam_counts)
         
-        # ---- Spam Detection & Analysis ----
+         # ---- Spam Detection & Analysis ----
         st.subheader('🚫 Spam Detection & Analysis')
         
         # Heuristic-based Spam Detection
@@ -162,6 +162,7 @@ if video_url:
             st.write(top_spammers)
         else:
             st.success("No spam comments detected! 🎉")
+
 
         # ---- Influential Commenters Analysis ----
         st.subheader('🔥 Influential Commenters Analysis')
