@@ -94,21 +94,36 @@ if video_url:
         df['Sentiment'] = sentiment_analysis(df['Processed_Comment'])
         df['Spam'] = df['Comment'].apply(detect_spam)
 
-        # ---- Sentiment Distribution ----
-        st.subheader('📊 Sentiment Distribution')
-        fig, ax = plt.subplots()
-        sns.countplot(x='Sentiment', data=df, palette='Set2', ax=ax)
-        plt.title("Sentiment Distribution")
-        st.pyplot(fig)
+        # ---- Time-Series Analysis ----
+        st.subheader('⏳ Time-Series Analysis of Sentiments')
+        df['Date'] = df['Timestamp'].dt.date
+        time_series_data = df.groupby(['Date', 'Sentiment']).size().unstack(fill_value=0)
+        st.line_chart(time_series_data)
 
-        # ---- Like-to-Dislike Ratio Analysis ----
-        st.subheader('👍 Like-to-Dislike Ratio Analysis')
-        plt.figure(figsize=(6, 4))
-        sns.histplot(df['Likes'], bins=20, kde=True, color='green')
-        plt.title('Distribution of Likes on Comments')
-        plt.xlabel('Number of Likes')
-        plt.ylabel('Comment Count')
-        st.pyplot(plt)
+
+        # ---- Side by Side Layout for Sentiment Distribution and Like-to-Dislike Ratio Analysis ----
+        st.subheader('📊 Sentiment Analysis Overview')
+        
+        # Create two columns
+        col1, col2 = st.columns(2)
+        
+        # ---- Sentiment Distribution (in the first column) ----
+        with col1:
+            st.markdown("### Sentiment Distribution")
+            fig1, ax1 = plt.subplots(figsize=(5, 4))
+            sns.countplot(x='Sentiment', data=df, palette='Set2', ax=ax1)
+            ax1.set_title("Sentiment Distribution")
+            st.pyplot(fig1)
+        
+        # ---- Like-to-Dislike Ratio Analysis (in the second column) ----
+        with col2:
+            st.markdown("### 👍 Like-to-Dislike Ratio Analysis")
+            fig2, ax2 = plt.subplots(figsize=(5, 4))
+            sns.histplot(df['Likes'], bins=20, kde=True, color='green', ax=ax2)
+            ax2.set_title('Distribution of Likes on Comments')
+            ax2.set_xlabel('Number of Likes')
+            ax2.set_ylabel('Comment Count')
+            st.pyplot(fig2)
 
         # ---- Spam Detection Visualization ----
         st.subheader('⚠️ Spam Detection Analysis')
@@ -148,13 +163,6 @@ if video_url:
         
         # Display as a table
         st.table(topics_df)
-
-
-        # ---- Time-Series Analysis ----
-        st.subheader('⏳ Time-Series Analysis of Sentiments')
-        df['Date'] = df['Timestamp'].dt.date
-        time_series_data = df.groupby(['Date', 'Sentiment']).size().unstack(fill_value=0)
-        st.line_chart(time_series_data)
 
         # ---- Confusion Matrix ----
         st.subheader('🗂️ Confusion Matrix')
