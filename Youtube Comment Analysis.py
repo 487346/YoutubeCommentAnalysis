@@ -125,10 +125,7 @@ if video_url:
             ax2.set_ylabel('Comment Count')
             st.pyplot(fig2)
 
-         # ---- Spam Detection & Analysis ----
-        st.subheader('🚫 Spam Detection & Analysis')
-        
-        # Enhanced Heuristic-based Spam Detection
+        # ---- Enhanced Heuristic-based Spam Detection ----
         def detect_spam(comment):
             spam_keywords = [
                 'http', 'www', 'subscribe', 'buy', 'check out', 'free', 'offer', 
@@ -143,15 +140,19 @@ if video_url:
                 r'[^\x00-\x7F]+'             # Non-ASCII characters (non-English or gibberish)
             ]
             
-            # Heuristic checks
-            if any(keyword in comment.lower() for keyword in spam_keywords):
+            # --- Heuristic checks ---
+            # Only flag comments with 3 or fewer words if they also match spam keywords
+            if len(comment.split()) < 3 and any(keyword in comment.lower() for keyword in spam_keywords):
                 return True
-            if len(comment.split()) < 3:  
+            
+            # Repetitive word check (relaxing the condition)
+            if len(set(comment.split())) < len(comment.split()) / 3:  # Changed from /2 to /3
                 return True
-            if len(set(comment.split())) < len(comment.split()) / 2:  
-                return True
+        
+            # Apply suspicious patterns
             if any(re.search(pattern, comment) for pattern in suspicious_patterns):
                 return True
+            
             return False
         
         # Apply Spam Detection
