@@ -129,6 +129,39 @@ if video_url:
         st.subheader('⚠️ Spam Detection Analysis')
         spam_counts = df['Spam'].value_counts()
         st.bar_chart(spam_counts)
+        
+        # ---- Spam Detection & Analysis ----
+        st.subheader('🚫 Spam Detection & Analysis')
+        
+        # Heuristic-based Spam Detection
+        def detect_spam(comment):
+            spam_keywords = ['http', 'www', 'subscribe', 'buy', 'check out', 'free', 'offer', 'discount', 'click', 'cheap']
+            if any(keyword in comment.lower() for keyword in spam_keywords):
+                return True
+            if len(comment.split()) < 3:  # Very short comments are often spam
+                return True
+            if len(set(comment.split())) < len(comment.split()) / 2:  # Too many repeated words
+                return True
+            return False
+        
+        # Apply Spam Detection
+        df['Is_Spam'] = df['Comment'].apply(detect_spam)
+        
+        # Display Spam Comments
+        spam_comments = df[df['Is_Spam']]
+        
+        # Show the usernames and their spam comments
+        if not spam_comments.empty:
+            st.markdown("### 🚩 Detected Spam Comments and Usernames")
+            st.write(spam_comments[['Comment', 'Is_Spam']])
+        
+            # Display a list of usernames with most spam comments
+            st.markdown("### 🔎 Top Spam Commenters")
+            top_spammers = spam_comments['Username'].value_counts().head(10).reset_index()
+            top_spammers.columns = ['Username', 'Spam Count']
+            st.write(top_spammers)
+        else:
+            st.success("No spam comments detected! 🎉")
 
         # ---- Influential Commenters Analysis ----
         st.subheader('🔥 Influential Commenters Analysis')
