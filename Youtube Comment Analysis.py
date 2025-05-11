@@ -200,21 +200,26 @@ if video_url:
         time_series_data = df.groupby(['Date', 'Sentiment']).size().unstack(fill_value=0)
         st.line_chart(time_series_data)
 
-        # Create two columns
+        # Assuming `df` is already available
+        y_pred = df['Sentiment']  # assuming this column contains the sentiment predictions
+        y_true = ['Positive' if i % 3 == 0 else 'Negative' if i % 3 == 1 else 'Neutral' for i in range(len(df))]  # Placeholder
+        
+        # Generate the confusion matrix with all three classes
+        cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative', 'Neutral'])
+        
+        # Create two columns for display
         col1, col2 = st.columns(2)
         
-        # Confusion Matrix for predicted vs. true sentiment
+        # Display Confusion Matrix
         with col1:
             st.subheader('Confusion Matrix')
-            y_pred = df['Sentiment']  # assuming this column contains the sentiment predictions
-            y_true = ['Positive' if i % 2 == 0 else 'Negative' for i in range(len(df))]  # Placeholder for actual labels
-            cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative'])
         
-        # Add another visual/metric (optional)
+        # Plot the Confusion Matrix in the second column
         with col2:
-            # Plot confusion matrix
-            plt.figure(figsize=(6, 5))
-            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Positive', 'Negative'], yticklabels=['Positive', 'Negative'])
+            plt.figure(figsize=(5, 4))
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+                        xticklabels=['Positive', 'Negative', 'Neutral'], 
+                        yticklabels=['Positive', 'Negative', 'Neutral'])
             plt.title('Confusion Matrix')
             st.pyplot(plt)
 
