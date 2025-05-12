@@ -20,6 +20,7 @@ nltk.download('stopwords')
 import re
 import joblib
 import os
+import numpy as np
 from nltk.sentiment import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 
