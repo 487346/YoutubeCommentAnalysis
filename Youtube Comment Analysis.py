@@ -176,18 +176,20 @@ if video_url:
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
+        # Top 10 Positive and Negative Comments
+        positive_comments = df[df['Sentiment'] == 'Positive']['Comment'].head(10).reset_index(drop=True)
+        negative_comments = df[df['Sentiment'] == 'Negative']['Comment'].head(10).reset_index(drop=True)
         
-        # Top 10 Positive Comments
+        # Combine into a DataFrame for display
+        comments_df = pd.DataFrame({
+            "Top 10 Positive Comments": positive_comments,
+            "Top 10 Negative Comments": negative_comments
+        })
+        
+        # Display in Columns
         with col1:
-            st.markdown("### Top 10 Positive Comments")
-            for comment in df[df['Sentiment'] == 'Positive']['Comment'].head(10):
-                st.write(f"- {comment}")
-        
-        # Top 10 Negative Comments
-        with col2:
-            st.markdown("### Top 10 Negative Comments")
-            for comment in df[df['Sentiment'] == 'Negative']['Comment'].head(10):
-                st.write(f"- {comment}")
+            st.markdown("### Positive vs Negative Comments")
+            st.dataframe(comments_df)
 
 
         # Most Common Words
