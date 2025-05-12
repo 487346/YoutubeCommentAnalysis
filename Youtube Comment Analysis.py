@@ -268,7 +268,7 @@ if video_url:
         # Plot the metrics with percentage display
         with col2:
             st.subheader('Confusion Matrix Breakdown')
-            plt.figure(figsize=(7, 5))
+            plt.figure(figsize=(5, 4))
             
             # Plotting each bar separately for better visibility
             bar_width = 0.2
