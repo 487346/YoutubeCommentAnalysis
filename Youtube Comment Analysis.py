@@ -393,31 +393,36 @@ def detect_spam(comment):
 if 'df' in locals():
     df['Spam'] = df['Comment'].apply(detect_spam)
 
-    # ---- Display Spam Comments and Analysis ----
-    st.subheader('🚫 Spam Detection & Analysis')
+    # ---- Create a single column layout ----
+    col = st.container()
     
-    # ---- Display Spam Comments ----
-    spam_comments = df[df['Spam'] == 'Spam']
-    if not spam_comments.empty:
-        st.markdown("### 🚩 Detected Spam Comments and Usernames")
-        st.dataframe(spam_comments[['User', 'Comment']])
-
-        # ---- Top Spam Commenters ----
-        st.markdown("### 🏆 Top Spam Commenters")
-        top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
-        top_spammers.columns = ['Username', 'Spam Count']
-        st.write(top_spammers)
-    else:
-        st.success("No spam comments detected! 🎉")
+    with col:
+        st.subheader('🚫 Spam Detection & Analysis')
         
-    # ---- Visualization ----
-    spam_counts = df['Spam'].value_counts()
-    fig, ax = plt.subplots()
-    sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
-    plt.title("Spam Detection Overview")
-    plt.ylabel('Number of Comments')
-    plt.xlabel('Comment Type')
-    st.pyplot(fig)
+        # ---- Display Spam Comments ----
+        spam_comments = df[df['Spam'] == 'Spam']
+        
+        if not spam_comments.empty:
+            st.markdown("### 🚩 Detected Spam Comments and Usernames")
+            st.dataframe(spam_comments[['User', 'Comment']], use_container_width=True)
+            
+            # ---- Top Spam Commenters ----
+            st.markdown("### 🏆 Top Spam Commenters")
+            top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
+            top_spammers.columns = ['Username', 'Spam Count']
+            st.write(top_spammers)
+        else:
+            st.success("No spam comments detected! 🎉")
+        
+        # ---- Visualization ----
+        st.markdown("### 📊 Spam Detection Overview")
+        spam_counts = df['Spam'].value_counts()
+        fig, ax = plt.subplots()
+        sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
+        plt.title("Spam Detection Overview")
+        plt.ylabel('Number of Comments')
+        plt.xlabel('Comment Type')
+        st.pyplot(fig)
     
 else:
     st.error('Invalid YouTube URL')
