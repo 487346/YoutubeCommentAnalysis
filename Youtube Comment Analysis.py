@@ -393,10 +393,11 @@ def detect_spam(comment):
 if 'df' in locals():
     df['Spam'] = df['Comment'].apply(detect_spam)
 
-    # ---- Create a single column layout ----
-    col = st.container()
+    # ---- Create two-column layout ----
+    col1, col2 = st.columns(2)
     
-    with col:
+    # ---- Display Spam Comments and Top Spammers in Col1 ----
+    with col1:
         st.subheader('🚫 Spam Detection & Analysis')
         
         # ---- Display Spam Comments ----
@@ -410,14 +411,15 @@ if 'df' in locals():
             st.markdown("### 🏆 Top Spam Commenters")
             top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
             top_spammers.columns = ['Username', 'Spam Count']
-            st.write(top_spammers)
+            st.dataframe(top_spammers, use_container_width=True)
         else:
             st.success("No spam comments detected! 🎉")
-        
-        # ---- Visualization ----
+    
+    # ---- Visualization in Col2 ----
+    with col2:
         st.markdown("### 📊 Spam Detection Overview")
         spam_counts = df['Spam'].value_counts()
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(5, 4))
         sns.barplot(x=spam_counts.index, y=spam_counts.values, palette='Reds')
         plt.title("Spam Detection Overview")
         plt.ylabel('Number of Comments')
