@@ -186,17 +186,25 @@ if video_url:
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
-        # Display Positive Comments
+        # Display Positive Comments with Borders
         with col1:
             st.markdown("### Top 10 Positive Comments")
             for comment in positive_comments:
-                st.write(f"- {comment}")
+                st.markdown(f"""
+                <div style='border: 1px solid #d3d3d3; padding: 10px; margin-bottom: 5px; border-radius: 5px;'>
+                    {comment}
+                </div>
+                """, unsafe_allow_html=True)
         
-        # Display Negative Comments
+        # Display Negative Comments with Borders
         with col2:
             st.markdown("### Top 10 Negative Comments")
             for comment in negative_comments:
-                st.write(f"- {comment}")
+                st.markdown(f"""
+                <div style='border: 1px solid #d3d3d3; padding: 10px; margin-bottom: 5px; border-radius: 5px;'>
+                    {comment}
+                </div>
+                """, unsafe_allow_html=True)
 
 
         # Most Common Words
