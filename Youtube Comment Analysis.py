@@ -265,6 +265,22 @@ if video_url:
             plt.title('TP, FP, FN, TN Breakdown by Class')
             st.pyplot(plt)
 
+        # WordClouds Side by Side
+        st.subheader('Word Clouds of Positive and Negative Comments')
+        
+        # Creating Columns for Side by Side Display
+        col1, col2 = st.columns(2)
+
+        # Positive Word Cloud
+        with col1:
+            st.markdown("### Positive Comments")
+            positive_words = ' '.join(df[df['Sentiment'] == 'Positive']['Processed_Comment'])
+            wordcloud = WordCloud(width=600, height=400).generate(positive_words)
+            plt.figure(figsize=(6, 4))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
+
         # Negative Word Cloud
         with col2:
             st.markdown("### Negative Comments")
