@@ -251,10 +251,13 @@ if video_url:
         
         # Plot the metrics with percentage display
         with col2:
-            st.write("Metrics DataFrame Preview:")
-            st.write(metrics_df)
+            st.subheader('Confusion Matrix Breakdown')
+            plt.figure(figsize=(7, 5))
+            
             # Plotting each bar separately for better visibility
             bar_width = 0.2
+            st.write("Metrics DataFrame Preview:")
+            st.write(metrics_df)
             st.write("Length of Classes:", len(metrics_df['Class']))
             positions = np.arange(len(metrics_df['Class'])) if len(metrics_df) > 0 else np.array([0])
             
