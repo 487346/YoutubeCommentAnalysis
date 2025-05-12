@@ -222,7 +222,7 @@ if video_url:
         y_true = ['Positive' if i % 3 == 0 else 'Negative' if i % 3 == 1 else 'Neutral' for i in range(len(df))]  # Placeholder
         
         # Display Metrics DataFrame Preview at the top
-        metrics_df = pd.DataFrame(metrics_data)
+        metrics_df = pd.DataFrame.from_dict(metrics_data, orient='index').transpose()
         st.subheader('Metrics DataFrame Preview')
         st.dataframe(metrics_df, use_container_width=True)
         
