@@ -222,11 +222,7 @@ if video_url:
         y_true = ['Positive' if i % 3 == 0 else 'Negative' if i % 3 == 1 else 'Neutral' for i in range(len(df))]  # Placeholder
         
         # Display Metrics DataFrame Preview at the top
-        if metrics_df is not None and not metrics_df.empty:
-            st.dataframe(metrics_df, use_container_width=True)
-        else:
-            st.error("Metrics DataFrame is empty or not initialized properly.")
-            
+        metrics_df = pd.DataFrame(metrics_data)
         st.subheader('Metrics DataFrame Preview')
         st.dataframe(metrics_df, use_container_width=True)
         
