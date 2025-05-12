@@ -186,14 +186,25 @@ if video_url:
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
-        # Display in respective columns
+        # Display Positive Comments with text wrapping
         with col1:
             st.markdown("### Top 10 Positive Comments")
-            st.dataframe(comments_df[['Top 10 Positive Comments']], use_container_width=True)
+            for comment in positive_comments:
+                st.markdown(f"""
+                <div style='border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 5px; word-wrap: break-word;'>
+                    {comment}
+                </div>
+                """, unsafe_allow_html=True)
         
+        # Display Negative Comments with text wrapping
         with col2:
             st.markdown("### Top 10 Negative Comments")
-            st.dataframe(comments_df[['Top 10 Negative Comments']], use_container_width=True)
+            for comment in negative_comments:
+                st.markdown(f"""
+                <div style='border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 5px; word-wrap: break-word;'>
+                    {comment}
+                </div>
+                """, unsafe_allow_html=True)
 
 
         # Most Common Words
