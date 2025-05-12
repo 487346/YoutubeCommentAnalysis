@@ -221,9 +221,9 @@ if video_url:
         y_pred = df['Sentiment']  # assuming this column contains the sentiment predictions
         y_true = ['Positive' if i % 3 == 0 else 'Negative' if i % 3 == 1 else 'Neutral' for i in range(len(df))]  # Placeholder
         
-        # Generate the confusion matrix with all three classes
-        cm = confusion_matrix(y_true, y_pred, labels=['Positive', 'Negative', 'Neutral'])
-        total = cm.sum() if cm.size > 0 else 1
+        # Display Metrics DataFrame Preview at the top
+        st.subheader('Metrics DataFrame Preview')
+        st.dataframe(metrics_df, use_container_width=True)
         
         # Create two columns for display
         col1, col2 = st.columns(2)
@@ -238,32 +238,6 @@ if video_url:
             plt.title('Confusion Matrix')
             st.pyplot(plt)
         
-        # Calculate TP, FP, FN, TN for each class
-        TP = [cm[i, i] for i in range(3)]
-        FP = [cm[:, i].sum() - cm[i, i] for i in range(3)]
-        FN = [cm[i, :].sum() - cm[i, i] for i in range(3)]
-        TN = [total - (TP[i] + FP[i] + FN[i]) for i in range(3)]
-        
-        # Calculate percentages
-        TP_pct = [round((x / total) * 100, 2) for x in TP]
-        FP_pct = [round((x / total) * 100, 2) for x in FP]
-        FN_pct = [round((x / total) * 100, 2) for x in FN]
-        TN_pct = [round((x / total) * 100, 2) for x in TN]
-        
-        metrics_data = {
-            'Class': ['Positive', 'Negative', 'Neutral'],
-            'True Positive (TP)': TP,
-            'False Positive (FP)': FP,
-            'False Negative (FN)': FN,
-            'True Negative (TN)': TN,
-            'TP %': TP_pct,
-            'FP %': FP_pct,
-            'FN %': FN_pct,
-            'TN %': TN_pct
-        }
-        
-        metrics_df = pd.DataFrame(metrics_data)
-        
         # Plot the metrics with percentage display
         with col2:
             st.subheader('Confusion Matrix Breakdown')
@@ -271,9 +245,6 @@ if video_url:
             
             # Plotting each bar separately for better visibility
             bar_width = 0.2
-            st.write("Metrics DataFrame Preview:")
-            st.write(metrics_df)
-            st.write("Length of Classes:", len(metrics_df['Class']))
             positions = np.arange(len(metrics_df['Class'])) if len(metrics_df) > 0 else np.array([0])
             
             # Bars
@@ -292,22 +263,6 @@ if video_url:
             plt.xticks(positions + bar_width * 1.5, metrics_df['Class'])
             plt.legend()
             plt.title('TP, FP, FN, TN Breakdown by Class')
-            st.pyplot(plt)
-
-        # WordClouds Side by Side
-        st.subheader('Word Clouds of Positive and Negative Comments')
-        
-        # Creating Columns for Side by Side Display
-        col1, col2 = st.columns(2)
-
-        # Positive Word Cloud
-        with col1:
-            st.markdown("### Positive Comments")
-            positive_words = ' '.join(df[df['Sentiment'] == 'Positive']['Processed_Comment'])
-            wordcloud = WordCloud(width=600, height=400).generate(positive_words)
-            plt.figure(figsize=(6, 4))
-            plt.imshow(wordcloud, interpolation='bilinear')
-            plt.axis('off')
             st.pyplot(plt)
 
         # Negative Word Cloud
