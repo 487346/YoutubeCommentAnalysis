@@ -396,27 +396,36 @@ if 'df' in locals():
     # ---- Create two-column layout ----
     col1, col2 = st.columns(2)
     
-    # ---- Display Spam Comments and Top Spammers in Col1 ----
+    # ---- Display Spam Comments in Column 1 ----
     with col1:
-        st.subheader('🚫 Spam Detection & Analysis')
+        st.subheader('🚩 Detected Spam Comments')
         
         # ---- Display Spam Comments ----
         spam_comments = df[df['Spam'] == 'Spam']
         
         if not spam_comments.empty:
-            st.markdown("### 🚩 Detected Spam Comments and Usernames")
+            st.markdown("### 🚫 Spam Comments and Usernames")
             st.dataframe(spam_comments[['User', 'Comment']], use_container_width=True)
-            
+        else:
+            st.success("No spam comments detected! 🎉")
+    
+    # ---- Display Top Spam Commenters in Column 2 ----
+    with col2:
+        st.subheader('🏆 Top Spam Commenters')
+        
+        if not spam_comments.empty:
             # ---- Top Spam Commenters ----
-            st.markdown("### 🏆 Top Spam Commenters")
             top_spammers = spam_comments['User'].value_counts().head(10).reset_index()
             top_spammers.columns = ['Username', 'Spam Count']
             st.dataframe(top_spammers, use_container_width=True)
         else:
-            st.success("No spam comments detected! 🎉")
-    
-    # ---- Visualization in Col2 ----
-    with col2:
+            st.success("No spammers found! 🎉")
+        # ---- Create a new container for the visualization ----
+    st.markdown("---")  # Line separator for better visibility
+    vis_col1, vis_col2 = st.columns(2)
+
+    # ---- Visualization in Left Column ----
+    with vis_col1:
         st.markdown("### 📊 Spam Detection Overview")
         spam_counts = df['Spam'].value_counts()
         fig, ax = plt.subplots(figsize=(5, 4))
