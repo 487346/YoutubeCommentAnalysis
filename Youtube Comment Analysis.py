@@ -186,18 +186,23 @@ if video_url:
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
+        # Inject custom CSS for word wrapping
+        st.markdown("""
+            <style>
+            .stDataFrame div {
+                white-space: pre-wrap;
+            }
+            </style>
+        """, unsafe_allow_html=True)
+        
         # Display in respective columns
         with col1:
             st.markdown("### Top 10 Positive Comments")
-            st.data_editor(comments_df[['Top 10 Positive Comments']], use_container_width=True, hide_index=True, column_config={
-                "Top 10 Positive Comments": st.column_config.TextColumn(width="1fr", wrap=True)
-            })
+            st.dataframe(comments_df[['Top 10 Positive Comments']], use_container_width=True)
         
         with col2:
             st.markdown("### Top 10 Negative Comments")
-            st.data_editor(comments_df[['Top 10 Negative Comments']], use_container_width=True, hide_index=True, column_config={
-                "Top 10 Negative Comments": st.column_config.TextColumn(width="1fr", wrap=True)
-            })
+            st.dataframe(comments_df[['Top 10 Negative Comments']], use_container_width=True)
 
 
         # Most Common Words
