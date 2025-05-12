@@ -211,6 +211,7 @@ if video_url:
         total = cm.sum() if cm.size > 0 else 1
         
         # Create two columns for display
+        st.write("Metrics DataFrame Preview:")
         col1, col2 = st.columns(2)
         
         # Display Confusion Matrix
@@ -256,7 +257,6 @@ if video_url:
             
             # Plotting each bar separately for better visibility
             bar_width = 0.2
-            st.write("Metrics DataFrame Preview:")
             st.write(metrics_df)
             st.write("Length of Classes:", len(metrics_df['Class']))
             positions = np.arange(len(metrics_df['Class'])) if len(metrics_df) > 0 else np.array([0])
