@@ -390,6 +390,8 @@ def detect_spam(comment):
 
 
 # ---- Apply the new spam detection on YouTube comments ----
+# ---- Section Header ----
+st.subheader('🚩 Detected Spam Comments')
 if 'df' in locals():
     df['Spam'] = df['Comment'].apply(detect_spam)
 
@@ -398,8 +400,6 @@ if 'df' in locals():
     
     # ---- Display Spam Comments in Column 1 ----
     with col1:
-        st.subheader('🚩 Detected Spam Comments')
-        
         # ---- Display Spam Comments ----
         spam_comments = df[df['Spam'] == 'Spam']
         
