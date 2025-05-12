@@ -186,25 +186,18 @@ if video_url:
         # Creating Columns for Side by Side Display
         col1, col2 = st.columns(2)
         
-        # Display Positive Comments with Borders
+        # Display in respective columns
         with col1:
             st.markdown("### Top 10 Positive Comments")
-            for comment in positive_comments:
-                st.markdown(f"""
-                <div style='border: 1px solid #d3d3d3; padding: 10px; margin-bottom: 5px; border-radius: 5px;'>
-                    {comment}
-                </div>
-                """, unsafe_allow_html=True)
+            st.data_editor(comments_df[['Top 10 Positive Comments']], use_container_width=True, hide_index=True, column_config={
+                "Top 10 Positive Comments": st.column_config.TextColumn(width="1fr", wrap=True)
+            })
         
-        # Display Negative Comments with Borders
         with col2:
             st.markdown("### Top 10 Negative Comments")
-            for comment in negative_comments:
-                st.markdown(f"""
-                <div style='border: 1px solid #d3d3d3; padding: 10px; margin-bottom: 5px; border-radius: 5px;'>
-                    {comment}
-                </div>
-                """, unsafe_allow_html=True)
+            st.data_editor(comments_df[['Top 10 Negative Comments']], use_container_width=True, hide_index=True, column_config={
+                "Top 10 Negative Comments": st.column_config.TextColumn(width="1fr", wrap=True)
+            })
 
 
         # Most Common Words
